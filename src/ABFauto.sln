@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29519.87
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABFauto", "ABFauto\ABFauto.csproj", "{D5373141-9E3B-45C6-8E69-53E996269E6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AbfAuto.Core", "AbfAuto.Core\AbfAuto.Core.csproj", "{0650E8C5-FF3D-46A2-AF89-90B59CF11277}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABFautoTests", "ABFautoTests\ABFautoTests.csproj", "{D4C8FAF3-7BCD-44DB-B6B8-F72658D18B44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AbfAuto.Tests", "AbfAuto.Tests\AbfAuto.Tests.csproj", "{215813E9-26EB-42F7-8A21-31D77EB1B35B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABFsharp", "..\..\ABFsharp\src\ABFsharp\ABFsharp.csproj", "{163DAB80-F6C8-4274-97D7-D1688AD0DAB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AbfAuto.Experiments", "AbfAuto.Experiments\AbfAuto.Experiments.csproj", "{219908FF-3BFB-4C53-A33C-859510BF83C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,23 +15,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D5373141-9E3B-45C6-8E69-53E996269E6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D5373141-9E3B-45C6-8E69-53E996269E6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D5373141-9E3B-45C6-8E69-53E996269E6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D5373141-9E3B-45C6-8E69-53E996269E6F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D4C8FAF3-7BCD-44DB-B6B8-F72658D18B44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4C8FAF3-7BCD-44DB-B6B8-F72658D18B44}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D4C8FAF3-7BCD-44DB-B6B8-F72658D18B44}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4C8FAF3-7BCD-44DB-B6B8-F72658D18B44}.Release|Any CPU.Build.0 = Release|Any CPU
-		{163DAB80-F6C8-4274-97D7-D1688AD0DAB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{163DAB80-F6C8-4274-97D7-D1688AD0DAB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{163DAB80-F6C8-4274-97D7-D1688AD0DAB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{163DAB80-F6C8-4274-97D7-D1688AD0DAB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0650E8C5-FF3D-46A2-AF89-90B59CF11277}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0650E8C5-FF3D-46A2-AF89-90B59CF11277}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0650E8C5-FF3D-46A2-AF89-90B59CF11277}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0650E8C5-FF3D-46A2-AF89-90B59CF11277}.Release|Any CPU.Build.0 = Release|Any CPU
+		{215813E9-26EB-42F7-8A21-31D77EB1B35B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{215813E9-26EB-42F7-8A21-31D77EB1B35B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{215813E9-26EB-42F7-8A21-31D77EB1B35B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{215813E9-26EB-42F7-8A21-31D77EB1B35B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{219908FF-3BFB-4C53-A33C-859510BF83C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{219908FF-3BFB-4C53-A33C-859510BF83C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{219908FF-3BFB-4C53-A33C-859510BF83C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{219908FF-3BFB-4C53-A33C-859510BF83C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {FFC509C6-4D33-4113-80A9-66C32C85D28D}
+		SolutionGuid = {23972CBD-EE97-47CB-892F-6A79612581EB}
 	EndGlobalSection
 EndGlobal
