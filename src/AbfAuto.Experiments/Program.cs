@@ -1,4 +1,5 @@
 ﻿using AbfAuto.Core;
+using AbfSharp;
 
 namespace AbfAuto.Experiments;
 
@@ -6,10 +7,34 @@ public static class Program
 {
     public static void Main()
     {
-        ApDectection.Detect(@"X:/Data/zProjects/SST diabetes/LTS neuron SST/abfs/2024-06-18-DIC1/2024_06_18_0012.abf");
+        foreach(string abfPath in GetAbfsWithProtocol(@"X:\Data\zProjects\SST diabetes\LTS neuron SST\abfs\", "0301"))
+        {
+            ApDectection.Detect(abfPath);
+        }
+
+        //string[] abfPaths = GetAbfsWithProtocol();
+
+        //ApDectection.Detect(@"X:/Data/zProjects/SST diabetes/LTS neuron SST/abfs/2024-06-18-DIC1/2024_06_18_0012.abf");
         //MeasurePulses(@"X:/Data/zProjects/OT-Tom NMDA signaling/Experiments/Testing NMDA unblock/Pulse train experiments/2024-06-21/2024_06_21_0009.abf");
         //MeasurePulses(@"X:/Data/zProjects/OT-Tom NMDA signaling/Experiments/Testing NMDA unblock/Pulse train experiments/2024-06-21/2024_06_21_0012.abf");
         //MeasurePulses(@"X:/Data/zProjects/OT-Tom NMDA signaling/Experiments/Testing NMDA unblock/Pulse train experiments/2024-06-21/2024_06_21_0015.abf");
+    }
+
+    // TODO: do this natively
+
+    public static IEnumerable<string> GetAbfsWithProtocol(string folder, string protocol)
+    {
+        string[] abfs = Directory.GetFiles(folder, "*.abf", SearchOption.AllDirectories);
+
+        for (int i = 0; i < abfs.Length; i++)
+        {
+            ABF abf = new(abfs[i], preloadSweepData: false);
+            string abfProtocol = Path.GetFileNameWithoutExtension(abf.Header.AbfFileHeader.sProtocolPath);
+            Console.WriteLine($"{i + 1} of {abfs.Length}: {abfProtocol}");
+
+            if (abfProtocol.Contains(protocol))
+                yield return abfs[i];
+        }
     }
 
     /// <summary>

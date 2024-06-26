@@ -56,4 +56,69 @@ public class Trace
     {
         return Values.Max();
     }
+
+    public Trace Derivative(int delta = 1)
+    {
+        double[] deriv = new double[Values.Length - delta];
+        for (int i = 0; i < deriv.Length; i++)
+        {
+            deriv[i] = Values[i + delta] - Values[i];
+        }
+
+        return new Trace(deriv, SamplePeriod);
+    }
+
+    public int[] DerivativeThresholdCrossings(double threshold = 10, double timeSec = 0.010)
+    {
+        int derivativePoints = (int)(SampleRate * timeSec);
+        Trace deriv = Derivative(derivativePoints);
+        int[] indexes = GetIndexesRising(deriv.Values, threshold);
+        indexes = RemoveDoublets(indexes);
+        return indexes;
+    }
+
+    public int[] RemoveDoublets(int[] values, double minSeparationSec = 0.01)
+    {
+        if (values.Length == 0)
+            return [];
+
+        int minDistance = (int)(SampleRate * minSeparationSec);
+
+        List<int> values2 = [values[0]];
+        for (int i = 1; i < values.Length; i++)
+        {
+            int distance = values[i] - values2.Last();
+            if (distance >= minDistance)
+            {
+                values2.Add(values[i]);
+            }
+        }
+
+        return values2.ToArray();
+    }
+
+    public static int[] GetIndexesRising(double[] values, double threshold)
+    {
+        List<int> indexes = [];
+
+        bool isAbove = false;
+        for (int i = 0; i < values.Length; i++)
+        {
+            // just crossed above
+            if (values[i] > threshold && !isAbove)
+            {
+                isAbove = true;
+                indexes.Add(i);
+                continue;
+            }
+
+            // just fell below
+            if (values[i] < threshold && isAbove)
+            {
+                isAbove = false;
+            }
+        }
+
+        return indexes.ToArray();
+    }
 }
