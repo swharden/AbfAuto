@@ -1,5 +1,6 @@
 ﻿namespace AbfAuto.Core;
+
 public interface IAnalysis
 {
-    public Multiplot Analyze(AbfSharp.ABFFIO.ABF abf);
+    public Multiplot Analyze(AbfSharp.ABF abf);
 }

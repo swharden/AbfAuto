@@ -38,8 +38,8 @@ public static class AbfAnalyzer
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine($"Analyzing: {abfPath}");
 
-        AbfSharp.ABFFIO.ABF abf = new(abfPath);
-        string protocol = Path.GetFileNameWithoutExtension(abf.Header.sProtocolPath);
+        AbfSharp.ABF abf = new(abfPath);
+        string protocol = Path.GetFileNameWithoutExtension(abf.Header.AbfFileHeader.sProtocolPath);
 
         IAnalysis? analysis = GetAnalysis(abf);
         if (analysis is null)
@@ -77,9 +77,9 @@ public static class AbfAnalyzer
         return analysisFolder;
     }
 
-    public static IAnalysis? GetAnalysis(AbfSharp.ABFFIO.ABF abf)
+    public static IAnalysis? GetAnalysis(AbfSharp.ABF abf)
     {
-        string protocol = Path.GetFileNameWithoutExtension(abf.Header.sProtocolPath);
+        string protocol = Path.GetFileNameWithoutExtension(abf.Header.AbfFileHeader.sProtocolPath);
 
         foreach (string key in AnalysesByProtocol.Keys)
         {

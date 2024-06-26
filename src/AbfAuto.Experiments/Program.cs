@@ -6,9 +6,10 @@ public static class Program
 {
     public static void Main()
     {
-        MeasurePulses(@"X:/Data/zProjects/OT-Tom NMDA signaling/Experiments/Testing NMDA unblock/Pulse train experiments/2024-06-21/2024_06_21_0009.abf");
-        MeasurePulses(@"X:/Data/zProjects/OT-Tom NMDA signaling/Experiments/Testing NMDA unblock/Pulse train experiments/2024-06-21/2024_06_21_0012.abf");
-        MeasurePulses(@"X:/Data/zProjects/OT-Tom NMDA signaling/Experiments/Testing NMDA unblock/Pulse train experiments/2024-06-21/2024_06_21_0015.abf");
+        ApDectection.Detect(@"X:/Data/zProjects/SST diabetes/LTS neuron SST/abfs/2024-06-18-DIC1/2024_06_18_0012.abf");
+        //MeasurePulses(@"X:/Data/zProjects/OT-Tom NMDA signaling/Experiments/Testing NMDA unblock/Pulse train experiments/2024-06-21/2024_06_21_0009.abf");
+        //MeasurePulses(@"X:/Data/zProjects/OT-Tom NMDA signaling/Experiments/Testing NMDA unblock/Pulse train experiments/2024-06-21/2024_06_21_0012.abf");
+        //MeasurePulses(@"X:/Data/zProjects/OT-Tom NMDA signaling/Experiments/Testing NMDA unblock/Pulse train experiments/2024-06-21/2024_06_21_0015.abf");
     }
 
     /// <summary>
@@ -17,10 +18,10 @@ public static class Program
     /// </summary>
     public static void MeasurePulses(string abfFilePath)
     {
-        AbfSharp.ABFFIO.ABF abf = new(abfFilePath);
+        AbfSharp.ABF abf = new(abfFilePath);
 
         Enumerable
-            .Range(0, abf.Header.fEpochInitLevel.Length)
+            .Range(0, abf.Header.AbfFileHeader.fEpochInitLevel.Length)
             .Select(x => new Epoch(abf, x))
             .Where(x => x.EpochTypeCode == 3)
             .ToList().ForEach(x => MeasurePulses(abf, x));
@@ -29,7 +30,7 @@ public static class Program
     /// <summary>
     /// Measure every pulse from the given epoch and save the result as a CSV file
     /// </summary>
-    public static void MeasurePulses(AbfSharp.ABFFIO.ABF abf, Epoch epoch)
+    public static void MeasurePulses(AbfSharp.ABF abf, Epoch epoch)
     {
         Console.WriteLine($"Analyzing {Path.GetFileName(abf.FilePath)} epoch {epoch.EpochName}");
 
@@ -53,7 +54,7 @@ public static class Program
     /// <summary>
     /// Return the mean value of the last 1ms of every pulse in the given epoch
     /// </summary>
-    public static double[] MeasurePulses(AbfSharp.ABFFIO.ABF abf, Epoch epoch, int sweepIndex)
+    public static double[] MeasurePulses(AbfSharp.ABF abf, Epoch epoch, int sweepIndex)
     {
         float[] sweepValues = abf.GetSweep(sweepIndex);
 

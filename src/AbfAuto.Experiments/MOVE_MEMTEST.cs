@@ -12,8 +12,8 @@ internal static class MOVE_MEMTEST
 
     public static void Memtest(string path)
     {
-        AbfSharp.ABFFIO.ABF abf = new(path);
-        Epoch[] epochs = Enumerable.Range(0, abf.Header.fEpochInitLevel.Length).Select(x => new Epoch(abf, x)).ToArray();
+        AbfSharp.ABF abf = new(path);
+        Epoch[] epochs = Enumerable.Range(0, abf.Header.AbfFileHeader.fEpochInitLevel.Length).Select(x => new Epoch(abf, x)).ToArray();
         Trace sweepTrace = new(abf, 0);
 
         Trace preStepTrace = sweepTrace.SubTraceByEpoch(epochs[0]);

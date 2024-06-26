@@ -2,7 +2,7 @@
 
 public class P0201_Memtest : IAnalysis
 {
-    public Multiplot Analyze(AbfSharp.ABFFIO.ABF abf)
+    public Multiplot Analyze(AbfSharp.ABF abf)
     {
         ScottPlot.Color[] colors = new ScottPlot.Colormaps.Turbo().GetColors(abf.SweepCount, .1, .9);
 

@@ -14,7 +14,7 @@ public class Trace
         SamplePeriod = samplePeriod;
     }
 
-    public Trace(AbfSharp.ABFFIO.ABF abf, int sweepIndex, int channelIndex = 0)
+    public Trace(AbfSharp.ABF abf, int sweepIndex, int channelIndex = 0)
     {
         float[] values = abf.GetSweep(sweepIndex, channelIndex);
         Values = new double[values.Length];

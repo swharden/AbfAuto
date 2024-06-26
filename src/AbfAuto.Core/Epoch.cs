@@ -14,30 +14,30 @@ public class Epoch
     public double StartTime => SamplePeriod * IndexFirst;
     public double EndTime => SamplePeriod * IndexLast;
 
-    public Epoch(AbfSharp.ABFFIO.ABF abf, int epochIndex)
+    public Epoch(AbfSharp.ABF abf, int epochIndex)
     {
         EpochIndex = epochIndex;
 
-        int totalRecordingLength = abf.Header.lActualAcqLength;
-        int sweepCount = abf.Header.lActualEpisodes;
+        int totalRecordingLength = abf.Header.AbfFileHeader.lActualAcqLength;
+        int sweepCount = abf.Header.AbfFileHeader.lActualEpisodes;
         int sweepLength = totalRecordingLength / sweepCount;
         int firstEpochIndex = sweepLength / 64;
 
         int previousEpochDurations = Enumerable
             .Range(0, epochIndex)
-            .Select(x => abf.Header.lEpochInitDuration[x])
+            .Select(x => abf.Header.AbfFileHeader.lEpochInitDuration[x])
             .Sum();
 
         int i1 = firstEpochIndex + previousEpochDurations;
-        int i2 = i1 + abf.Header.lEpochInitDuration[epochIndex];
+        int i2 = i1 + abf.Header.AbfFileHeader.lEpochInitDuration[epochIndex];
 
         IndexFirst = i1;
         IndexLast = i2;
-        Level = abf.Header.fEpochInitLevel[epochIndex];
+        Level = abf.Header.AbfFileHeader.fEpochInitLevel[epochIndex];
         SamplePeriod = abf.SamplePeriod;
-        EpochTypeCode = abf.Header.nEpochType[epochIndex];
+        EpochTypeCode = abf.Header.AbfFileHeader.nEpochType[epochIndex];
 
-        PulsePeriodSamples = abf.Header.lEpochPulsePeriod[epochIndex];
-        PulseWidthSamples = abf.Header.lEpochPulseWidth[epochIndex];
+        PulsePeriodSamples = abf.Header.AbfFileHeader.lEpochPulsePeriod[epochIndex];
+        PulseWidthSamples = abf.Header.AbfFileHeader.lEpochPulseWidth[epochIndex];
     }
 }

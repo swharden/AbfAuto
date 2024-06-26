@@ -8,14 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="ABFsharp" Version="0.5.0" />
-      <PackageReference Include="ScottPlot" Version="5.0.35" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Update="ABFFIO.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
+        <PackageReference Include="ABFsharp" Version="0.6.4" />
+        <PackageReference Include="ScottPlot" Version="5.0.35" />
     </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@ public class AbfChannel
     {
         string abfFilePath = Path.GetFullPath(path);
 
-        AbfSharp.ABFFIO.ABF abf = new(abfFilePath);
+        AbfSharp.ABF abf = new(abfFilePath);
 
         Sweeps = Enumerable
             .Range(0, abf.SweepCount)

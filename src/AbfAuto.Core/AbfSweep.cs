@@ -19,7 +19,7 @@ public class AbfSweep
         return xs;
     }
 
-    public static AbfSweep FromAbf(AbfSharp.ABFFIO.ABF abf, int sweepIndex, int channelIndex = 0)
+    public static AbfSweep FromAbf(AbfSharp.ABF abf, int sweepIndex, int channelIndex = 0)
     {
         float[] values = abf.GetSweep(sweepIndex, channelIndex);
         double[] values2 = new double[values.Length];

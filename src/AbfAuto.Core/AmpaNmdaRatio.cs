@@ -12,7 +12,7 @@ public class AmpaNmdaRatio
     public AmpaNmdaRatio(string path)
     {
         string abfFilePath = Path.GetFullPath(path);
-        AbfSharp.ABFFIO.ABF abf = new(abfFilePath);
+        AbfSharp.ABF abf = new(abfFilePath);
         Sweeps = Enumerable.Range(0, abf.SweepCount).Select(x => AbfSweep.FromAbf(abf, x)).ToArray();
     }
 

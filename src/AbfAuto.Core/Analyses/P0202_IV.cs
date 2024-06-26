@@ -4,7 +4,7 @@ namespace AbfAuto.Core.Analyses;
 
 public class P0202_IV : IAnalysis
 {
-    public Multiplot Analyze(AbfSharp.ABFFIO.ABF abf)
+    public Multiplot Analyze(AbfSharp.ABF abf)
     {
         TimeRange measureRange = new(2.4, 2.5);
         double[] currents = new double[abf.SweepCount];
