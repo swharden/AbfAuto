@@ -8,8 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="ABFsharp" Version="0.6.4" />
         <PackageReference Include="ScottPlot" Version="5.0.35" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\AbfSharp\src\AbfSharp\ABFsharp.csproj" />
     </ItemGroup>
 
 </Project>

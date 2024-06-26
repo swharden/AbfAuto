@@ -15,7 +15,7 @@ public class Multiplot
     public static Multiplot WithSinglePlot(Plot plot, int width, int height)
     {
         Multiplot mp = new(width, height);
-        mp.Full(plot);
+        mp.AddFullSize(plot);
         return mp;
     }
 
@@ -27,16 +27,16 @@ public class Multiplot
         Surface = SKSurface.Create(imageInfo);
     }
 
-    public void Full(Plot plot)
+    public void AddFullSize(Plot plot)
     {
         PixelRect pxRect = new(0, Width, Height, 0);
         plot.Render(Canvas, pxRect);
     }
 
-    public void Subplot(Plot plot, int columnIndex, int totalColumns)
+    public void AddSubplot(Plot plot, int rowIndex, int totalRows, int columnIndex, int totalColumns)
     {
-        PixelSize size = new(Width / totalColumns, Height);
-        Pixel corner = new(size.Width * columnIndex, 0);
+        PixelSize size = new(Width / totalColumns, Height / totalRows);
+        Pixel corner = new(size.Width * columnIndex, size.Height * rowIndex);
         PixelRect pxRect = new(corner, size);
         plot.RenderManager.ClearCanvasBeforeEachRender = false;
         plot.Render(Canvas, pxRect);

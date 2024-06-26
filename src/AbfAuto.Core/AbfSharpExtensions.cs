@@ -22,15 +22,4 @@ public static class AbfSharpExtensions
 
         return new Trace(values, 1.0 / abf.Header.SampleRate);
     }
-
-    public static void DEBUG_LaunchBrowserWithHeaderInfo(this AbfSharp.ABF abf)
-    {
-        string htmlFilePath = Path.GetTempFileName() + ".html";
-        AbfSharp.Reports.AbfHeaderReport report = new(abf.FilePath);
-        File.WriteAllText(htmlFilePath, report.GetHtml());
-
-        ProcessStartInfo psi = new(htmlFilePath) { UseShellExecute = true };
-        Process p = new() { StartInfo = psi };
-        p.Start();
-    }
 }

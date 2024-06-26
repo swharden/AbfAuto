@@ -1,4 +1,6 @@
-﻿namespace AbfAuto.Core;
+﻿using AbfAuto.Core.EventDetection;
+
+namespace AbfAuto.Core;
 
 public class Trace
 {
@@ -68,38 +70,26 @@ public class Trace
         return new Trace(deriv, SamplePeriod);
     }
 
-    public int[] DerivativeThresholdCrossings(double threshold = 10, double timeSec = 0.010)
+    public EventCollection DerivativeThresholdCrossings(double threshold = 10, double timeSec = 0.010)
     {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+
         int derivativePoints = (int)(SampleRate * timeSec);
         Trace deriv = Derivative(derivativePoints);
-        int[] indexes = GetIndexesRising(deriv.Values, threshold);
-        indexes = RemoveDoublets(indexes);
-        return indexes;
+        EventCollection events = GetIndexesRising(deriv.Values, threshold);
+        events.RemoveHighFrequencyEvents(100);
+
+        Console.WriteLine(
+            $"Detected {events.Count:N2} events " +
+            $"from a {SamplePeriod * Values.Length / 60:N2} minute ABF " +
+            $"in {sw.Elapsed.TotalSeconds:N2} sec");
+
+        return events;
     }
 
-    public int[] RemoveDoublets(int[] values, double minSeparationSec = 0.01)
+    public EventCollection GetIndexesRising(double[] values, double threshold)
     {
-        if (values.Length == 0)
-            return [];
-
-        int minDistance = (int)(SampleRate * minSeparationSec);
-
-        List<int> values2 = [values[0]];
-        for (int i = 1; i < values.Length; i++)
-        {
-            int distance = values[i] - values2.Last();
-            if (distance >= minDistance)
-            {
-                values2.Add(values[i]);
-            }
-        }
-
-        return values2.ToArray();
-    }
-
-    public static int[] GetIndexesRising(double[] values, double threshold)
-    {
-        List<int> indexes = [];
+        EventCollection events = new(SampleRate);
 
         bool isAbove = false;
         for (int i = 0; i < values.Length; i++)
@@ -108,7 +98,7 @@ public class Trace
             if (values[i] > threshold && !isAbove)
             {
                 isAbove = true;
-                indexes.Add(i);
+                events.AddIndex(i);
                 continue;
             }
 
@@ -119,6 +109,6 @@ public class Trace
             }
         }
 
-        return indexes.ToArray();
+        return events;
     }
 }

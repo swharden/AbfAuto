@@ -6,8 +6,8 @@ public static class AbfAnalyzer
 {
     readonly static Dictionary<string, Type> AnalysesByProtocol = new()
     {
-        { "0201", typeof(Analyses.P0201_Memtest) },
-        { "0202", typeof(Analyses.P0202_IV) },
+        { "0201", typeof(Protocols.P0201_Memtest) },
+        { "0202", typeof(Protocols.P0202_IV) },
     };
 
     public static string GetAnalysisFilePath(string abfPath, IAnalysis analysis)

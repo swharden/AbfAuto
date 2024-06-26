@@ -1,4 +1,4 @@
-﻿namespace AbfAuto.Core.Analyses;
+﻿namespace AbfAuto.Core.Protocols;
 
 public class P0201_Memtest : IAnalysis
 {

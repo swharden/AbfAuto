@@ -1,6 +1,6 @@
 ﻿using ScottPlot;
 
-namespace AbfAuto.Core.Analyses;
+namespace AbfAuto.Core.Protocols;
 
 public class P0202_IV : IAnalysis
 {
@@ -38,8 +38,8 @@ public class P0202_IV : IAnalysis
         plot2.YLabel("Current (pA)");
 
         Multiplot mp = new(800, 600);
-        mp.Subplot(plot1, 0, 2);
-        mp.Subplot(plot2, 1, 2);
+        mp.AddSubplot(plot1, 0, 2, 0, 1);
+        mp.AddSubplot(plot2, 1, 2, 0, 1);
 
         return mp;
     }
