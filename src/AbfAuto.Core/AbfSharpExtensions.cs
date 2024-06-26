@@ -13,7 +13,7 @@ public static class AbfSharpExtensions
         int offset = 0;
         for (int sweepIndex = 0; sweepIndex < abf.SweepCount; sweepIndex++)
         {
-            float[] sweepValues = abf.GetSweep(sweepIndex, channelIndex);
+            float[] sweepValues = abf.GetSweepF(sweepIndex, channelIndex);
             for (int i = 0; i < sweepValues.Length; i++)
             {
                 values[offset++] = sweepValues[i];
