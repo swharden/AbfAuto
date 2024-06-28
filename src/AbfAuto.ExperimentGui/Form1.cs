@@ -62,28 +62,36 @@ public partial class Form1 : Form
         return scaled * mult;
     }
 
+    private EventDetection.Settings GetSettings()
+    {
+        return new()
+        {
+            Threshold = GetThresholdValue(),
+            SmoothingMsec = 2,
+            TrendlineMsec = 100,
+        };
+    }
+
     private void AnalyzeEvents()
     {
         if (Abf is null)
             return;
 
-        List<EventDetection.SweepAnalysisResult> resultsBySweep = [];
+        List<EventDetection.SweepAnalysisResult> results = [];
         Stopwatch sw = Stopwatch.StartNew();
         for (int i = 0; i < Abf.SweepCount; i++)
         {
-            EventDetection.SweepAnalysisResult sweepResult = EventDetection.DetectEvents(Abf, i, GetThresholdValue());
-            resultsBySweep.Add(sweepResult);
+            EventDetection.SweepAnalysisResult sweepResult = EventDetection.DetectEvents(Abf, i, GetSettings());
+            results.Add(sweepResult);
         };
         sw.Stop();
 
-        int totalEventCount = resultsBySweep.Select(x => x.Events.Length).Sum();
+        int totalEventCount = results.Select(x => x.Events.Length).Sum();
 
-        Form2 form = new()
-        {
-            Text = $"Detected {totalEventCount:N0} events in {sw.Elapsed.TotalMilliseconds:N2} ms",
-        };
+        EventDetection.PlotAllTraces(Abf, results.ToArray(), 100).SavePng("test.png", 800, 800).LaunchInBrowser();
 
-        form.SetEvents(resultsBySweep.ToArray());
+        Form2 form = new();
+        form.SetEvents(results.ToArray());
         form.ShowDialog();
     }
 
@@ -103,13 +111,9 @@ public partial class Form1 : Form
         // plot traces
         var sigSweep = formsPlot1.Plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
         sigSweep.Color = Colors.C0;
-        //sigSweep.Color = Colors.Blue.WithAlpha(.4);
-
-        //var sigTrend = formsPlot1.Plot.Add.Signal(trendline.Values, trendline.SamplePeriod);
-        //sigTrend.Color = Colors.Black;
 
         // detect events
-        var results = EventDetection.DetectEvents(Abf, sweepIndex, GetThresholdValue());
+        var results = EventDetection.DetectEvents(Abf, sweepIndex, GetSettings());
 
         // plot peaks
         double[] peakXs = results.Events.Select(x => x.Time).ToArray();
