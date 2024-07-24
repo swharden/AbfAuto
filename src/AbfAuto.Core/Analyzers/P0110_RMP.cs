@@ -1,9 +1,11 @@
-﻿using AbfSharp;
+﻿using AbfAuto.Core.Extensions;
+using AbfAuto.Core.SortLater;
+using AbfSharp;
 using ScottPlot;
 
-namespace AbfAuto.Core.Protocols;
+namespace AbfAuto.Core.Analyzers;
 
-internal class P0110_RMP : IAnalysis
+internal class P0110_RMP : IAnalyzer
 {
     public Multiplot Analyze(ABF abf)
     {

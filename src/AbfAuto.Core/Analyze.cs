@@ -1,17 +1,11 @@
 ﻿using System.Diagnostics;
+using AbfAuto.Core.SortLater;
 
 namespace AbfAuto.Core;
 
-public static class AbfAnalyzer
+public static class Analyze
 {
-    readonly static Dictionary<string, Type> AnalysesByProtocol = new()
-    {
-        { "0201", typeof(Protocols.P0201_Memtest) },
-        { "0202", typeof(Protocols.P0202_IV) },
-        { "0110", typeof(Protocols.P0110_RMP) },
-    };
-
-    public static string GetAnalysisFilePath(string abfPath, IAnalysis analysis)
+    public static string GetAnalysisFilePath(string abfPath, IAnalyzer analysis)
     {
         string abfid = Path.GetFileNameWithoutExtension(abfPath);
         string analysisFolder = GetAnalysisFolder(abfPath);
@@ -42,7 +36,7 @@ public static class AbfAnalyzer
         AbfSharp.ABF abf = new(abfPath);
         string protocol = Path.GetFileNameWithoutExtension(abf.Header.AbfFileHeader.sProtocolPath);
 
-        IAnalysis? analysis = GetAnalysis(abf);
+        IAnalyzer analysis = AnalyzerLookup.GetAnalysis(abf);
         if (analysis is null)
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
@@ -76,25 +70,5 @@ public static class AbfAnalyzer
         if (!Directory.Exists(analysisFolder))
             Directory.CreateDirectory(analysisFolder);
         return analysisFolder;
-    }
-
-    public static IAnalysis? GetAnalysis(AbfSharp.ABF abf)
-    {
-        string protocol = Path.GetFileNameWithoutExtension(abf.Header.AbfFileHeader.sProtocolPath);
-
-        foreach (string key in AnalysesByProtocol.Keys)
-        {
-            if (protocol.StartsWith(key))
-            {
-                object? inst = Activator.CreateInstance(AnalysesByProtocol[key]);
-
-                if (inst is IAnalysis ian)
-                    return ian;
-                else
-                    throw new InvalidOperationException($"{inst} is does not inherit {nameof(IAnalysis)}");
-            }
-        };
-
-        return null;
     }
 }

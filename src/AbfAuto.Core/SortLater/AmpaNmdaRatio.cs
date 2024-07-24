@@ -1,6 +1,6 @@
 ﻿using ScottPlot;
 
-namespace AbfAuto.Core;
+namespace AbfAuto.Core.SortLater;
 
 public class AmpaNmdaRatio
 {
@@ -74,9 +74,9 @@ public class AmpaNmdaRatio
         return values;
     }
 
-    public (ScottPlot.Plot, double[] values) PlotSweepsAmpa()
+    public (Plot, double[] values) PlotSweepsAmpa()
     {
-        ScottPlot.Plot plot = new();
+        Plot plot = new();
 
         double[] valuesBySweep = new double[Sweeps.Length];
 
@@ -118,9 +118,9 @@ public class AmpaNmdaRatio
         return (plot, valuesBySweep);
     }
 
-    public (ScottPlot.Plot, double[] values) PlotSweepsNmda()
+    public (Plot, double[] values) PlotSweepsNmda()
     {
-        ScottPlot.Plot plot = new();
+        Plot plot = new();
 
         double[] valuesBySweep = new double[Sweeps.Length];
 

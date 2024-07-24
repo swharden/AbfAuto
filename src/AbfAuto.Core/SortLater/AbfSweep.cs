@@ -1,4 +1,4 @@
-﻿namespace AbfAuto.Core;
+﻿namespace AbfAuto.Core.SortLater;
 
 public class AbfSweep
 {
@@ -83,7 +83,7 @@ public class AbfSweep
     public AbfSweep WithSubtraction(TimeRange timeRange)
     {
         double baseline = GetMean(timeRange);
-        return this.WithSubtraction((float)baseline);
+        return WithSubtraction((float)baseline);
     }
 
     public AbfSweep WithSubtraction(double value)

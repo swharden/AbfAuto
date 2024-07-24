@@ -1,4 +1,4 @@
-﻿namespace AbfAuto.Core;
+﻿namespace AbfAuto.Core.SortLater;
 public readonly record struct IndexRange(int Index1, int Index2)
 {
     public TimeRange ToTimeRange(double SampleRate) => new()

@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
+﻿namespace AbfAuto.Core.EventDetection;
 
-namespace AbfAuto.Core.EventDetection;
 public class EventCollection(double sampleRate)
 {
     public int Count => Indexes.Count;

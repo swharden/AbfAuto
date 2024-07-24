@@ -1,4 +1,4 @@
-﻿namespace AbfAuto.Core;
+﻿namespace AbfAuto.Core.Memtest;
 
 public record struct MemtestResult
 {

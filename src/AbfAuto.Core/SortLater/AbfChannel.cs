@@ -1,4 +1,4 @@
-﻿namespace AbfAuto.Core;
+﻿namespace AbfAuto.Core.SortLater;
 
 public class AbfChannel
 {

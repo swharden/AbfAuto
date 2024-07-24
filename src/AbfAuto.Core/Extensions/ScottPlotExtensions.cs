@@ -1,6 +1,7 @@
-﻿using ScottPlot.Colormaps;
+﻿using AbfAuto.Core.SortLater;
+using ScottPlot.Colormaps;
 
-namespace AbfAuto.Core;
+namespace AbfAuto.Core.Extensions;
 
 public static class ScottPlotExtensions
 {

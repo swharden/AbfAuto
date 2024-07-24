@@ -1,9 +1,10 @@
 ﻿using AbfAuto.Core.EventDetection;
+using AbfAuto.Core.Extensions;
 using ScottPlot;
 
-namespace AbfAuto.Core.Analyses;
+namespace AbfAuto.Core.SortLater;
 
-public class APFrequencyOverTime : IAnalysis
+public class APFrequencyOverTime : IAnalyzer
 {
     public Multiplot Analyze(AbfSharp.ABF abf)
     {

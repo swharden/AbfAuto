@@ -2,7 +2,7 @@
 using ScottPlot.AxisLimitManagers;
 using SkiaSharp;
 
-namespace AbfAuto.Core;
+namespace AbfAuto.Core.SortLater;
 
 public class Multiplot
 {

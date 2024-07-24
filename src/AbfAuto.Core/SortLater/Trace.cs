@@ -1,6 +1,6 @@
 ﻿using AbfAuto.Core.EventDetection;
 
-namespace AbfAuto.Core;
+namespace AbfAuto.Core.SortLater;
 
 public class Trace
 {

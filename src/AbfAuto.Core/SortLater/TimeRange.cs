@@ -1,4 +1,4 @@
-﻿namespace AbfAuto.Core;
+﻿namespace AbfAuto.Core.SortLater;
 
 public readonly record struct TimeRange(double Time1, double Time2)
 {

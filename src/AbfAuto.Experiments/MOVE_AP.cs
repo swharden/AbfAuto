@@ -1,4 +1,6 @@
 ﻿using AbfAuto.Core;
+using AbfAuto.Core.Extensions;
+using AbfAuto.Core.SortLater;
 
 namespace AbfAuto.Experiments;
 
@@ -18,7 +20,7 @@ internal class MOVE_AP
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 AbfSharp.ABF abf = new(abfFiles[i]);
-                IAnalysis analysis = new Core.Analyses.APFrequencyOverTime();
+                IAnalyzer analysis = new APFrequencyOverTime();
                 Multiplot mp = analysis.Analyze(abf);
                 mp.SaveForLabWebsite(abf);
                 System.GC.Collect();
