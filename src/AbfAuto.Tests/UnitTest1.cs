@@ -5,6 +5,5 @@ public class Tests
     [Test]
     public void Test_Analyzer()
     {
-        
     }
 }

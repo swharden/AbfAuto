@@ -111,4 +111,12 @@ public class Trace
 
         return events;
     }
+
+    public void SubtractInPlace(double value)
+    {
+        for (int i = 0; i < Values.Length; i++)
+        {
+            Values[i] -= value;
+        }
+    }
 }
