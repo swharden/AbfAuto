@@ -119,4 +119,34 @@ public class Trace
             Values[i] -= value;
         }
     }
+
+    public Trace SmoothedMsec(double msec)
+    {
+        int pointCount = (int)(msec / 1000 / SamplePeriod);
+        return SmoothedPoints(pointCount);
+    }
+
+    public Trace SmoothedPoints(int pointCount)
+    {
+        double[] smooth = new double[Values.Length];
+
+        double runningSum = 0;
+
+        for (int i = 0; i < smooth.Length; i++)
+        {
+            runningSum += Values[i];
+
+            if (i >= pointCount)
+            {
+                runningSum -= Values[i - pointCount];
+                smooth[i] = runningSum / pointCount;
+            }
+            else
+            {
+                smooth[i] = runningSum / (i + 1);
+            }
+        }
+
+        return new Trace(smooth, SamplePeriod);
+    }
 }

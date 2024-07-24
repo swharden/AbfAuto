@@ -8,6 +8,7 @@ public static class AbfAnalyzer
     {
         { "0201", typeof(Protocols.P0201_Memtest) },
         { "0202", typeof(Protocols.P0202_IV) },
+        { "0110", typeof(Protocols.P0110_RMP) },
     };
 
     public static string GetAnalysisFilePath(string abfPath, IAnalysis analysis)
