@@ -6,7 +6,7 @@ namespace AbfAuto.Core.SortLater;
 
 public class APFrequencyOverTime : IAnalyzer
 {
-    public Multiplot Analyze(AbfSharp.ABF abf)
+    public AnalysisResult Analyze(AbfSharp.ABF abf)
     {
         Trace trace = abf.GetAllData();
 
@@ -14,10 +14,10 @@ public class APFrequencyOverTime : IAnalyzer
         rawPlot.Add.Signal(trace.Values, abf.SamplePeriod / 60);
         rawPlot.AddVerticalLinesAtCommentMinutes(abf);
         rawPlot.YLabel("Potential (mV)");
-        rawPlot.Title($"{abf.AbfID}: AP Frequency in 10 second bins");
+        rawPlot.Title($"{abf.AbfID()}: AP Frequency in 10 second bins");
 
         EventCollection events = trace.DerivativeThresholdCrossings(threshold: 10, timeSec: 0.01);
-        (double[] bins, double[] freqs) = events.GetBinnedFrequency(abf.Header.AbfLength, binSizeSec: 10);
+        (double[] bins, double[] freqs) = events.GetBinnedFrequency(abf.AbfLength(), binSizeSec: 10);
 
         Plot freqPlot = new();
         freqPlot.Add.Scatter(bins, freqs);
@@ -27,9 +27,10 @@ public class APFrequencyOverTime : IAnalyzer
         freqPlot.YLabel("Frequency (Hz)");
         freqPlot.XLabel("Time (minutes)");
 
-        Multiplot mp = new(600, 600);
+        MultiPlot2 mp = new();
         mp.AddSubplot(rawPlot, 0, 2, 0, 1);
         mp.AddSubplot(freqPlot, 1, 2, 0, 1);
-        return mp;
+
+        return AnalysisResult.WithSingleMultiPlot(mp);
     }
 }

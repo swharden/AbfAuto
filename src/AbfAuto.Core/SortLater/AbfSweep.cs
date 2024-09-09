@@ -21,7 +21,7 @@ public class AbfSweep
 
     public static AbfSweep FromAbf(AbfSharp.ABF abf, int sweepIndex, int channelIndex = 0)
     {
-        float[] values = abf.GetSweepF(sweepIndex, channelIndex);
+        float[] values = abf.GetSweep(sweepIndex, channelIndex);
         double[] values2 = new double[values.Length];
         Array.Copy(values, values2, values.Length);
 

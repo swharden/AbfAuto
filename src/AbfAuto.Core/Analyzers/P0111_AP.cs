@@ -1,4 +1,5 @@
-﻿using AbfAuto.Core.Extensions;
+﻿using AbfAuto.Core.EventDetection;
+using AbfAuto.Core.Extensions;
 using AbfAuto.Core.SortLater;
 using ScottPlot;
 
@@ -6,43 +7,60 @@ namespace AbfAuto.Core.Analyzers;
 
 public class P0111_AP : IAnalyzer
 {
-    public Multiplot Analyze(AbfSharp.ABF abf)
+    public AnalysisResult Analyze(AbfSharp.ABF abf)
     {
-        TimeRange measureRange = new(2.4, 2.5);
-        double[] currents = new double[abf.SweepCount];
-        double[] voltages = Generate.Consecutive(abf.SweepCount, 10, -110);
-        Color[] colors = new ScottPlot.Colormaps.Turbo().GetColors(abf.SweepCount, .1, .9);
+        Trace trace = abf.GetAllData();
+
+        DerivativeThreshold.Settings setttings = new();
+        int[] indexes = DerivativeThreshold.GetIndexes(trace.Values, trace.SampleRate, setttings);
+        int firstApIndex = indexes.FirstOrDefault();
+
+        int i1 = Math.Max(0, firstApIndex - 1000);
+        int i2 = firstApIndex + 1000;
+        Trace apTrace = trace.SubTraceByIndex(i1, i2);
+        Trace dvdtTrace = apTrace.Derivative();
 
         Plot plot1 = new();
+        Plot plot2 = new();
+        Plot plot3 = new();
+        Plot plot4 = new();
 
-        var span = plot1.Add.HorizontalSpan(measureRange.MinTime, measureRange.MaxTime);
-        span.FillColor = Colors.Black.WithAlpha(.1);
-
-        for (int i = 0; i < abf.SweepCount; i++)
+        plot1.Title("First AP (V)");
+        plot2.Title("First AP (dV)");
+        if (indexes.Length > 0)
         {
-            AbfSweep sweep = AbfSweep.FromAbf(abf, i).WithSmoothing(200);
-            var sig = plot1.Add.Signal(sweep.Values, sweep.SamplePeriod);
-            sig.Color = colors[i].WithAlpha(.8);
-            sig.LineWidth = 2;
+            var sig1 = plot1.AddSignalMS(apTrace);
+            sig1.Color = Colors.Blue;
+            sig1.AlwaysUseLowDensityMode = true;
+            sig1.LineWidth = 1.5f;
 
-            currents[i] = sweep.GetMean(measureRange);
+            var sig2 = plot2.AddSignalMS(dvdtTrace);
+            sig2.Color = Colors.Red;
+            sig2.AlwaysUseLowDensityMode = true;
+            sig2.LineWidth = 1.5f;
+
+            plot2.Axes.AutoScale();
+            plot2.Axes.ZoomIn(fracX: 5);
         }
 
-        plot1.XLabel("Sweep Time (sec)");
-        plot1.YLabel("Current (pA)");
-        plot1.Axes.Margins(horizontal: 0);
+        plot3.Title("Full Trace");
+        var sig3 = plot3.AddSignalMS(trace);
+        sig3.AlwaysUseLowDensityMode = true;
+        sig3.LineWidth = 1.5f;
 
-        Plot plot2 = new();
-        var sp = plot2.Add.Scatter(voltages, currents);
-        sp.LineWidth = 2;
-        sp.MarkerSize = 10;
-        plot2.XLabel("Membrane Potential (mV)");
-        plot2.YLabel("Current (pA)");
+        plot3.Axes.Margins(horizontal: 0);
 
-        Multiplot mp = new(800, 600);
-        mp.AddSubplot(plot1, 0, 2, 0, 1);
-        mp.AddSubplot(plot2, 1, 2, 0, 1);
+        plot4.Title("First AP (dV/dt)");
+        var sp = plot4.Add.ScatterLine(apTrace.Values, dvdtTrace.Values);
+        sp.LineColor = Colors.C1;
+        sp.LineWidth = 1.5f;
 
-        return mp;
+        MultiPlot2 mp = new();
+        mp.AddSubplot(plot1, 0, 2, 0, 2);
+        mp.AddSubplot(plot2, 0, 2, 1, 2);
+        mp.AddSubplot(plot3, 1, 2, 0, 2);
+        mp.AddSubplot(plot4, 1, 2, 1, 2);
+
+        return AnalysisResult.WithSingleMultiPlot(mp);
     }
 }

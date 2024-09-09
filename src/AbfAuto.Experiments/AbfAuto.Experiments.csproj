@@ -9,11 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Meta.Numerics" Version="4.1.4" />
-        <PackageReference Include="ScottPlot.WinForms" Version="5.0.35" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\AbfAuto.Core\AbfAuto.Core.csproj" />
     </ItemGroup>
 

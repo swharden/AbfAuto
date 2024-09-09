@@ -6,7 +6,7 @@ namespace AbfAuto.Core.Analyzers;
 
 public class P0202_IV : IAnalyzer
 {
-    public Multiplot Analyze(AbfSharp.ABF abf)
+    public AnalysisResult Analyze(AbfSharp.ABF abf)
     {
         TimeRange measureRange = new(2.4, 2.5);
         double[] currents = new double[abf.SweepCount];
@@ -14,9 +14,6 @@ public class P0202_IV : IAnalyzer
         Color[] colors = new ScottPlot.Colormaps.Turbo().GetColors(abf.SweepCount, .1, .9);
 
         Plot plot1 = new();
-
-        var span = plot1.Add.HorizontalSpan(measureRange.MinTime, measureRange.MaxTime);
-        span.FillColor = Colors.Black.WithAlpha(.1);
 
         for (int i = 0; i < abf.SweepCount; i++)
         {
@@ -39,10 +36,10 @@ public class P0202_IV : IAnalyzer
         plot2.XLabel("Membrane Potential (mV)");
         plot2.YLabel("Current (pA)");
 
-        Multiplot mp = new(800, 600);
-        mp.AddSubplot(plot1, 0, 2, 0, 1);
-        mp.AddSubplot(plot2, 1, 2, 0, 1);
+        AnalysisResult result = new();
+        result.Plots.Add(new SizedPlot(plot1, new PixelSize(800, 600)));
+        result.Plots.Add(new SizedPlot(plot2, new PixelSize(800, 600)));
 
-        return mp;
+        return result;
     }
 }

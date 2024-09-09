@@ -7,7 +7,7 @@ namespace AbfAuto.Core.Analyzers;
 
 public class Unknown : IAnalyzer
 {
-    public Multiplot Analyze(ABF abf)
+    public AnalysisResult Analyze(ABF abf)
     {
         Trace trace = abf.GetAllData();
 
@@ -18,9 +18,9 @@ public class Unknown : IAnalyzer
         var an = plot.Add.Annotation("Unsupported Protocol");
         an.LabelFontSize = 26;
         an.Alignment = Alignment.UpperRight;
-        an.LabelFontName = "consolas";
+        an.LabelFontName = ScottPlot.Fonts.Monospace;
         an.LabelBold = true;
 
-        return Multiplot.WithSinglePlot(plot, 600, 400);
+        return AnalysisResult.WithSinglePlot(plot);
     }
 }

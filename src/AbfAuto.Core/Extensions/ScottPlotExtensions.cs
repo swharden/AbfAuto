@@ -1,25 +1,16 @@
 ﻿using AbfAuto.Core.SortLater;
-using ScottPlot.Colormaps;
 
 namespace AbfAuto.Core.Extensions;
 
 public static class ScottPlotExtensions
 {
-    public static ScottPlot.Color[] GetColors(this ScottPlot.IColormap cmap, int count, double start = 0, double end = 1)
-    {
-        double step = (end - start) / (count - 1);
-        return Enumerable.Range(0, count)
-            .Select(i => cmap.GetColor(i * step + start))
-            .ToArray();
-    }
-
-    public static void SaveForLabWebsite(this Multiplot mp, AbfSharp.ABF abf)
+    public static void SaveForLabWebsite(this MultiPlot2 mp, AbfSharp.ABF abf)
     {
         string abfFolder = Path.GetDirectoryName(abf.FilePath)!;
         string analysisFolder = Path.Combine(abfFolder, "_autoanalysis");
         if (!Directory.Exists(analysisFolder))
             Directory.CreateDirectory(analysisFolder);
-        string saveAs = Path.Combine(analysisFolder, $"{abf.AbfID}_ApTimeCourse.png");
+        string saveAs = Path.Combine(analysisFolder, $"{abf.AbfID()}_ApTimeCourse.png");
         mp.SavePng(saveAs);
         Console.WriteLine(saveAs);
     }
@@ -30,7 +21,7 @@ public static class ScottPlotExtensions
         string analysisFolder = Path.Combine(abfFolder, "_autoanalysis");
         if (!Directory.Exists(analysisFolder))
             Directory.CreateDirectory(analysisFolder);
-        string saveAs = Path.Combine(analysisFolder, $"{abf.AbfID}_ApTimeCourse.png");
+        string saveAs = Path.Combine(analysisFolder, $"{abf.AbfID()}_ApTimeCourse.png");
         var saved = plot.SavePng(saveAs, width, height);
         Console.WriteLine(saved.Path);
         return saved;
@@ -45,5 +36,13 @@ public static class ScottPlotExtensions
             vLine.LineWidth = 3;
             vLine.LinePattern = ScottPlot.LinePattern.Dashed;
         }
+    }
+
+    public static ScottPlot.Plottables.Signal AddSignalMS(this ScottPlot.Plot plot, Trace trace)
+    {
+        var sig = plot.Add.Signal(trace.Values, trace.SamplePeriod * 1000);
+        plot.XLabel("Time (msec)");
+        plot.Axes.Margins(horizontal: 0);
+        return sig;
     }
 }

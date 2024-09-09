@@ -2,5 +2,5 @@
 
 public interface IAnalyzer
 {
-    public SortLater.Multiplot Analyze(AbfSharp.ABF abf);
+    public AnalysisResult Analyze(AbfSharp.ABF abf);
 }
