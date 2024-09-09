@@ -36,4 +36,9 @@ public class AnalysisResult
 
         return filenames.ToArray();
     }
+
+    public void LaunchInteractive()
+    {
+        Plots.ForEach(x => x.LaunchInteractive());
+    }
 }

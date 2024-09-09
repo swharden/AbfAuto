@@ -9,16 +9,16 @@ public class P0111_AP : IAnalyzer
 {
     public AnalysisResult Analyze(AbfSharp.ABF abf)
     {
-        Trace trace = abf.GetAllData();
+        Sweep sweep = abf.GetAllData();
 
-        DerivativeThreshold.Settings setttings = new();
-        int[] indexes = DerivativeThreshold.GetIndexes(trace.Values, trace.SampleRate, setttings);
+        DerivativeThreshold.Settings settings = new();
+        int[] indexes = DerivativeThreshold.GetIndexes(sweep, settings);
         int firstApIndex = indexes.FirstOrDefault();
 
         int i1 = Math.Max(0, firstApIndex - 1000);
         int i2 = firstApIndex + 1000;
-        Trace apTrace = trace.SubTraceByIndex(i1, i2);
-        Trace dvdtTrace = apTrace.Derivative();
+        Sweep apTrace = sweep.SubSweepByIndex(i1, i2);
+        Sweep dvdtTrace = apTrace.Derivative();
 
         Plot plot1 = new();
         Plot plot2 = new();
@@ -44,14 +44,14 @@ public class P0111_AP : IAnalyzer
         }
 
         plot3.Title("Full Trace");
-        var sig3 = plot3.AddSignalMS(trace);
+        var sig3 = plot3.AddSignalMS(sweep);
         sig3.AlwaysUseLowDensityMode = true;
         sig3.LineWidth = 1.5f;
 
         plot3.Axes.Margins(horizontal: 0);
 
         plot4.Title("First AP (dV/dt)");
-        var sp = plot4.Add.ScatterLine(apTrace.Values, dvdtTrace.Values);
+        var sp = plot4.Add.ScatterLine((List<double>)apTrace.Values, (List<double>)dvdtTrace.Values);
         sp.LineColor = Colors.C1;
         sp.LineWidth = 1.5f;
 

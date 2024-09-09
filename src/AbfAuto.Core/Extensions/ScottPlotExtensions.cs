@@ -38,9 +38,9 @@ public static class ScottPlotExtensions
         }
     }
 
-    public static ScottPlot.Plottables.Signal AddSignalMS(this ScottPlot.Plot plot, Trace trace)
+    public static ScottPlot.Plottables.Signal AddSignalMS(this ScottPlot.Plot plot, Sweep sweep)
     {
-        var sig = plot.Add.Signal(trace.Values, trace.SamplePeriod * 1000);
+        var sig = plot.Add.Signal(sweep.Values, sweep.SamplePeriod * 1000);
         plot.XLabel("Time (msec)");
         plot.Axes.Margins(horizontal: 0);
         return sig;

@@ -4,19 +4,20 @@ using ScottPlot;
 
 namespace AbfAuto.Core.SortLater;
 
+    /*
 public class APFrequencyOverTime : IAnalyzer
 {
     public AnalysisResult Analyze(AbfSharp.ABF abf)
     {
-        Trace trace = abf.GetAllData();
+        Sweep sweep = abf.GetAllData();
 
         Plot rawPlot = new();
-        rawPlot.Add.Signal(trace.Values, abf.SamplePeriod / 60);
+        rawPlot.Add.Signal(sweep.Values, abf.SamplePeriod / 60);
         rawPlot.AddVerticalLinesAtCommentMinutes(abf);
         rawPlot.YLabel("Potential (mV)");
         rawPlot.Title($"{abf.AbfID()}: AP Frequency in 10 second bins");
 
-        EventCollection events = trace.DerivativeThresholdCrossings(threshold: 10, timeSec: 0.01);
+        EventCollection events = sweep.DerivativeThresholdCrossings(threshold: 10, timeSec: 0.01);
         (double[] bins, double[] freqs) = events.GetBinnedFrequency(abf.AbfLength(), binSizeSec: 10);
 
         Plot freqPlot = new();
@@ -34,3 +35,4 @@ public class APFrequencyOverTime : IAnalyzer
         return AnalysisResult.WithSingleMultiPlot(mp);
     }
 }
+    */

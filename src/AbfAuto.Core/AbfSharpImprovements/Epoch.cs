@@ -1,4 +1,4 @@
-﻿namespace AbfAuto.Core.SortLater;
+﻿namespace AbfAuto.Core;
 
 public class Epoch
 {
@@ -13,6 +13,7 @@ public class Epoch
     public double SamplePeriod { get; }
     public double StartTime => SamplePeriod * IndexFirst;
     public double EndTime => SamplePeriod * IndexLast;
+    public double Duration => EndTime - StartTime;
 
     public Epoch(AbfSharp.ABF abf, int epochIndex)
     {

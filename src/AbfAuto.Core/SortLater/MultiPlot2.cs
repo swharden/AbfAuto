@@ -28,6 +28,19 @@ public class SizedPlot
         Plot?.SavePng(path, (int)Size.Width, (int)Size.Height);
         MultiPlot?.SavePng(path, (int)Size.Width, (int)Size.Height);
     }
+
+    public void LaunchInteractive()
+    {
+        if (Plot is not null)
+        {
+            ScottPlot.WinForms.FormsPlotViewer.Launch(Plot);
+        }
+
+        MultiPlot?.Subplots
+                .Select(x => x.Plot)
+                .ToList()
+                .ForEach(x => ScottPlot.WinForms.FormsPlotViewer.Launch(x));
+    }
 }
 
 public struct SubplotRect

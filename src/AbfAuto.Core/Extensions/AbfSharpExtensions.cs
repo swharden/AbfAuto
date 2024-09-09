@@ -1,10 +1,8 @@
-﻿using AbfAuto.Core.SortLater;
-
-namespace AbfAuto.Core.Extensions;
+﻿namespace AbfAuto.Core.Extensions;
 
 public static class AbfSharpExtensions
 {
-    public static Trace GetAllData(this AbfSharp.ABF abf, int channelIndex = 0)
+    public static Sweep GetAllData(this AbfSharp.ABF abf, int channelIndex = 0)
     {
         int samplesPerSweep = abf.Header.AbfFileHeader.lNumSamplesPerEpisode / abf.Header.AbfFileHeader.nADCNumChannels;
         int sweepCount = abf.Header.AbfFileHeader.lActualEpisodes;
@@ -20,6 +18,6 @@ public static class AbfSharpExtensions
             }
         }
 
-        return new Trace(values, 1.0 / abf.Header.SampleRate);
+        return new Sweep(values, abf.SampleRate, 0, channelIndex, 0);
     }
 }

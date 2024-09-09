@@ -9,12 +9,12 @@ internal class P0110_RMP : IAnalyzer
 {
     public AnalysisResult Analyze(ABF abf)
     {
-        Trace trace = abf.GetAllData().SmoothedMsec(2);
-        double mean = trace.Values.Average();
+        Sweep sweep = abf.GetAllData().Smooth(TimeSpan.FromMilliseconds(2));
+        double mean = sweep.Values.Average();
 
         Plot plot = new();
 
-        var sig = plot.Add.Signal(trace.Values, trace.SamplePeriod);
+        var sig = plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
         sig.LineWidth = 1.5f;
         sig.AlwaysUseLowDensityMode = true;
 

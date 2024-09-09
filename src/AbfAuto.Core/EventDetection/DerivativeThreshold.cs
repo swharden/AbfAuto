@@ -1,4 +1,6 @@
-﻿namespace AbfAuto.Core.EventDetection;
+﻿using static AbfAuto.Core.EventDetection.DerivativeThreshold;
+
+namespace AbfAuto.Core.EventDetection;
 
 public static class DerivativeThreshold
 {
@@ -13,16 +15,24 @@ public static class DerivativeThreshold
         /// Detect events that change <see cref="DeltaAmplitude"/> over <see cref="DeltaTime"/>.
         /// </summary>
         public TimeSpan DeltaTime { get; init; } = TimeSpan.FromMilliseconds(1);
+
+        public static Settings AP => new()
+        {
+            DeltaAmplitude = 20,
+            DeltaTime = TimeSpan.FromMilliseconds(1),
+        };
     }
 
-    public static int[] GetIndexes(double[] ys, double period, Settings settings)
+    public static int[] GetIndexes(Sweep sweep, Settings settings)
     {
         List<int> indexes = [];
 
-        int dtPoints = (int)(settings.DeltaTime.TotalSeconds * period);
+        int dtPoints = (int)Math.Ceiling(sweep.SampleRate * settings.DeltaTime.TotalSeconds);
+
+        var ys = sweep.Values;
 
         int i = dtPoints;
-        while (i < ys.Length)
+        while (i < ys.Count)
         {
             double dv = ys[i] - ys[i - dtPoints];
 
@@ -32,15 +42,15 @@ public static class DerivativeThreshold
                 indexes.Add(i);
 
                 // move forward until we reach the peak
-                for (; i < ys.Length && ys[i] >= ys[i - 1]; i++) { }
+                for (; i < ys.Count && ys[i] >= ys[i - 1]; i++) { }
 
-                // move forward until we reach the antipeak
-                for (; i < ys.Length && ys[i] <= ys[i - 1]; i++) { }
+                // move forward until we reach the nadir
+                for (; i < ys.Count && ys[i] <= ys[i - 1]; i++) { }
             }
 
             i++;
         }
 
-        return indexes.ToArray();
+        return [.. indexes];
     }
 }

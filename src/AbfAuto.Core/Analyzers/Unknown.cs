@@ -1,5 +1,4 @@
 ﻿using AbfAuto.Core.Extensions;
-using AbfAuto.Core.SortLater;
 using AbfSharp;
 using ScottPlot;
 
@@ -9,11 +8,11 @@ public class Unknown : IAnalyzer
 {
     public AnalysisResult Analyze(ABF abf)
     {
-        Trace trace = abf.GetAllData();
+        Sweep sweep = abf.GetAllData();
 
         Plot plot = new();
 
-        plot.Add.Signal(trace.Values, trace.SamplePeriod);
+        plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
         plot.DataBackground.Color = Colors.Red.WithAlpha(.1);
         var an = plot.Add.Annotation("Unsupported Protocol");
         an.LabelFontSize = 26;
