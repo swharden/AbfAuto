@@ -8,6 +8,7 @@ public class EventCollection(double sampleRate)
     private readonly double SampleRate = sampleRate;
 
     public void AddIndex(int index) => Indexes.Add(index);
+    public void AddIndexRange(int[] indexes) => Indexes.AddRange(indexes);
     public void AddTime(double timeSec) => Indexes.Add((int)(timeSec * SampleRate));
 
     public void RemoveHighFrequencyEvents(double maxFreq) => RemoveDuplicateEvents(1.0 / maxFreq);
@@ -53,6 +54,8 @@ public class EventCollection(double sampleRate)
 
     public (double[] bins, double[] freqs) GetBinnedFrequency(double totalLengthSec, double binSizeSec, bool minutes = true)
     {
+        totalLengthSec += binSizeSec;
+
         int binsInAbf = (int)(totalLengthSec / binSizeSec); // last partially filled bin omitted
         double[] binStarts = Enumerable.Range(0, binsInAbf).Select(x => x * binSizeSec).ToArray();
         List<double>[] binFreqs = Enumerable.Range(0, binsInAbf).Select(x => new List<double>()).ToArray();

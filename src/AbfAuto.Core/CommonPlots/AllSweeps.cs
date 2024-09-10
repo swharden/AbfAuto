@@ -27,10 +27,15 @@ public static class AllSweeps
         return plot;
     }
 
-    public static ScottPlot.Plot Consecutive(AbfSharp.ABF abf)
+    public static ScottPlot.Plot Consecutive(AbfSharp.ABF abf, int channelIndex = 0)
+    {
+        Sweep sweep = abf.GetAllData(channelIndex);
+        return Consecutive(sweep);
+    }
+
+    public static ScottPlot.Plot Consecutive(Sweep sweep)
     {
         Plot plot = new();
-        Sweep sweep = abf.GetAllData();
         plot.Add.Signal(sweep.Values, sweep.SamplePeriod / 60);
         return plot;
     }

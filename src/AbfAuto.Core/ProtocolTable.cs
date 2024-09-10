@@ -14,6 +14,8 @@ public static class ProtocolTable
         { "0202", typeof(Analyzers.P0202_IV) },
 
         { "0301", typeof(Analyzers.P0301_APFreqOverTime) },
+
+        { "EEG-3", typeof(Analyzers.PEEG_3Ch) },
     };
 
     public static IAnalyzer GetAnalysis(AbfSharp.ABF abf)

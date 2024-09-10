@@ -1,4 +1,5 @@
 ﻿using ScottPlot.Colormaps;
+using ScottPlot.TickGenerators.TimeUnits;
 
 namespace AbfAuto.Core;
 
@@ -10,6 +11,7 @@ public class Sweep
     public int SweepIndex { get; }
     public int ChannelIndex { get; }
     public double FileStartTime { get; }
+    public double Duration => Values.Count / SampleRate;
 
     public Sweep(IReadOnlyList<double> values, double sampleRate, int sweepIndex, int channelIndex, double fileStartTime)
     {
@@ -69,6 +71,18 @@ public static class SweepExtensions
         return sweep.WithValues(newValues);
     }
 
+    public static Sweep Rectified(this Sweep sweep)
+    {
+        double[] newValues = new double[sweep.Values.Count];
+
+        for (int i = 0; i < newValues.Length; i++)
+        {
+            newValues[i] = Math.Abs(sweep.Values[i]);
+        }
+
+        return sweep.WithValues(newValues);
+    }
+
     public static Sweep Smooth(this Sweep sweep, TimeSpan timeSpan)
     {
         int pointCount = (int)(timeSpan.TotalMilliseconds / 1000.0 / sweep.SamplePeriod);
@@ -122,5 +136,18 @@ public static class SweepExtensions
         }
 
         return sweep.WithValues(smooth);
+    }
+
+    public static Sweep Detrend(this Sweep sweep, int pointCount)
+    {
+        Sweep trend = sweep.Smooth(pointCount);
+
+        double[] values2 = new double[sweep.Values.Count];
+        for (int i = 0; i < values2.Length; i++)
+        {
+            values2[i] = sweep.Values[i] - trend.Values[i];
+        }
+
+        return sweep.WithValues(values2);
     }
 }
