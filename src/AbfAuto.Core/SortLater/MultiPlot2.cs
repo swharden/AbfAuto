@@ -112,6 +112,12 @@ public class MultiPlot2
 
     public void AddSubplot(Plot plot, int rowIndex, int totalRows, int columnIndex, int totalColumns)
     {
+        if (totalRows < 1)
+            throw new ArgumentException($"{nameof(totalRows)} must be at least 1");
+
+        if (totalColumns < 1)
+            throw new ArgumentException($"{nameof(totalColumns)} must be at least 1");
+
         double colWidth = 1.0 / totalColumns;
         double colHeight = 1.0 / totalRows;
 

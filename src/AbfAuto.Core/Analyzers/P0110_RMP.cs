@@ -13,12 +13,13 @@ internal class P0110_RMP : IAnalyzer
         double mean = sweep.Values.Average();
 
         Plot plot = new();
-
-        var sig = plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
-        sig.LineWidth = 1.5f;
-        sig.AlwaysUseLowDensityMode = true;
+        plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
+        plot
+            .WithSignalLineWidth(1.5)
+            .WithSignalHighQualityRendering();
 
         plot.Add.HorizontalLine(mean, 2, Colors.Black, LinePattern.DenselyDashed);
+
         var an = plot.Add.Annotation($"RMP = {mean:N2} mV");
         an.Alignment = Alignment.UpperRight;
         an.LabelBorderWidth = 0;
@@ -42,6 +43,6 @@ internal class P0110_RMP : IAnalyzer
             plot.Axes.SetLimitsY(yMin, yMax);
         }
 
-        return AnalysisResult.WithSinglePlot(plot);
+        return AnalysisResult.Single(plot);
     }
 }

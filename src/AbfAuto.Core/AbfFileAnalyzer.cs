@@ -29,7 +29,7 @@ public class AbfFileAnalyzer
         AbfSharp.ABF abf = new(AbfPath);
         string protocol = Path.GetFileNameWithoutExtension(abf.Header.AbfFileHeader.sProtocolPath);
 
-        IAnalyzer analysis = AnalyzerLookup.GetAnalysis(abf);
+        IAnalyzer analysis = ProtocolTable.GetAnalysis(abf);
         if (analysis is null)
         {
             Console.ForegroundColor = ConsoleColor.Magenta;

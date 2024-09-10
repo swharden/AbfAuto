@@ -18,7 +18,7 @@ public static class DerivativeThreshold
 
         public static Settings AP => new()
         {
-            DeltaAmplitude = 20,
+            DeltaAmplitude = 10,
             DeltaTime = TimeSpan.FromMilliseconds(1),
         };
     }

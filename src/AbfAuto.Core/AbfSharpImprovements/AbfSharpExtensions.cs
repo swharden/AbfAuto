@@ -54,4 +54,10 @@ public static class AbfSharpExtensions
     {
         return new Epoch(abf, index);
     }
+
+    public static double[] SweepStartTimes(this AbfSharp.ABF abf)
+    {
+        double sweepLengthSec = abf.SweepLength();
+        return Enumerable.Range(0, abf.SweepCount).Select(x => sweepLengthSec * x).ToArray();
+    }
 }

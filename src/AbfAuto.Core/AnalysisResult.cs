@@ -6,7 +6,7 @@ public class AnalysisResult
 {
     public List<SizedPlot> Plots { get; } = [];
 
-    public static AnalysisResult WithSinglePlot(Plot plot, int width = 800, int height = 600)
+    public static AnalysisResult Single(Plot plot, int width = 800, int height = 600)
     {
         SizedPlot sp = new(plot, new PixelSize(width, height));
         AnalysisResult result = new();
@@ -14,7 +14,7 @@ public class AnalysisResult
         return result;
     }
 
-    public static AnalysisResult WithSingleMultiPlot(MultiPlot2 multiPlot, int width = 800, int height = 600)
+    public static AnalysisResult Single(MultiPlot2 multiPlot, int width = 800, int height = 600)
     {
         SizedPlot sp = new(multiPlot, new PixelSize(width, height));
         AnalysisResult result = new();

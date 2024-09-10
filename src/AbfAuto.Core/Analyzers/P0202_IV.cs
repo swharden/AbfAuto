@@ -8,38 +8,66 @@ public class P0202_IV : IAnalyzer
 {
     public AnalysisResult Analyze(AbfSharp.ABF abf)
     {
-        TimeRange measureRange = new(2.4, 2.5);
-        double[] currents = new double[abf.SweepCount];
-        double[] voltages = Generate.Consecutive(abf.SweepCount, 10, -110);
-        Color[] colors = new ScottPlot.Colormaps.Turbo().GetColors(abf.SweepCount, .1, .9);
+        TimeRange ssRange = new(2.3, 2.5);
+        TimeRange tailRange = new(2.57, 2.7);
 
-        Plot plot1 = new();
+        (double[] ssVoltages, double[] ssCurrents) = GetIvPoints(abf, ssRange);
+        (double[] tailVoltages, double[] tailCurrents) = GetIvPoints(abf, tailRange);
 
-        for (int i = 0; i < abf.SweepCount; i++)
-        {
-            AbfSweep sweep = AbfSweep.FromAbf(abf, i).WithSmoothing(200);
-            var sig = plot1.Add.Signal(sweep.Values, sweep.SamplePeriod);
-            sig.Color = colors[i].WithAlpha(.8);
-            sig.LineWidth = 2;
-
-            currents[i] = sweep.GetMean(measureRange);
-        }
-
-        plot1.XLabel("Sweep Time (sec)");
-        plot1.YLabel("Current (pA)");
-        plot1.Axes.Margins(horizontal: 0);
+        Plot plot1 = CommonPlots.AllSweeps
+            .Overlapping(abf, smoothPoints: 200)
+            .WithSignalLineWidth(1.5)
+            .WithSignalRainbow()
+            .WithTightHorizontalMargins()
+            .WithXLabelSeconds()
+            .WithYLabelCurrent();
 
         Plot plot2 = new();
-        var sp = plot2.Add.Scatter(voltages, currents);
-        sp.LineWidth = 2;
-        sp.MarkerSize = 10;
+        var sp2 = plot2.Add.Scatter(ssVoltages, ssCurrents);
+        sp2.LineWidth = 2;
+        sp2.MarkerSize = 8;
+        sp2.Color = Colors.Red;
+        plot2.Add.VerticalLine(-70, 2, Colors.Red.WithAlpha(.5), LinePattern.DenselyDashed);
+        plot2.Add.HorizontalLine(0, 2, Colors.Red.WithAlpha(.5), LinePattern.DenselyDashed);
         plot2.XLabel("Membrane Potential (mV)");
-        plot2.YLabel("Current (pA)");
+        plot2.YLabel("Steady State Current (pA)");
 
-        AnalysisResult result = new();
-        result.Plots.Add(new SizedPlot(plot1, new PixelSize(800, 600)));
-        result.Plots.Add(new SizedPlot(plot2, new PixelSize(800, 600)));
+        Plot plot3 = CommonPlots.AllSweeps
+            .Overlapping(abf, smoothPoints: 200)
+            .WithSignalLineWidth(1.5)
+            .WithSignalRainbow()
+            .WithXLabelSeconds()
+            .WithYLabelCurrent();
+        plot3.Axes.SetLimitsX(2.25, 2.8);
+        plot3.Add.HorizontalSpan(ssRange.Time1, ssRange.Time2, Colors.Red.WithAlpha(.1));
+        plot3.Add.HorizontalSpan(tailRange.Time1, tailRange.Time2, Colors.Blue.WithAlpha(.1));
 
-        return result;
+        Plot plot4 = new();
+        var sp4 = plot4.Add.Scatter(tailVoltages, tailCurrents);
+        sp4.LineWidth = 2;
+        sp4.MarkerSize = 8;
+        sp4.Color = Colors.Blue;
+        plot4.Add.VerticalLine(-70, 2, Colors.Red.WithAlpha(.5), LinePattern.DenselyDashed);
+        plot4.Add.HorizontalLine(0, 2, Colors.Red.WithAlpha(.5), LinePattern.DenselyDashed);
+        plot4.XLabel("Membrane Potential (mV)");
+        plot4.YLabel("Steady State Current (pA)");
+
+        MultiPlot2 mp = new();
+        mp.AddSubplot(plot1, 0, 2, 0, 2);
+        mp.AddSubplot(plot2, 0, 2, 1, 2);
+        mp.AddSubplot(plot3, 1, 2, 0, 2);
+        mp.AddSubplot(plot4, 1, 2, 1, 2);
+
+        return AnalysisResult.Single(mp);
+    }
+
+    public static (double[] voltages, double[] currents) GetIvPoints(AbfSharp.ABF abf, TimeRange measureRange)
+    {
+        double[] voltages = Generate.Consecutive(abf.SweepCount, 10, -110);
+        double[] currents = Enumerable
+            .Range(0, abf.SweepCount)
+            .Select(x => AbfSweep.FromAbf(abf, x).GetMean(measureRange))
+            .ToArray();
+        return (voltages, currents);
     }
 }

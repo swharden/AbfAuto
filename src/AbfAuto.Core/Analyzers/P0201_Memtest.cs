@@ -41,6 +41,6 @@ public class P0201_Memtest : IAnalyzer
         plot.YLabel("Current (pA)");
         plot.HideGrid();
 
-        return AnalysisResult.WithSinglePlot(plot);
+        return AnalysisResult.Single(plot);
     }
 }

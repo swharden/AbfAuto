@@ -45,13 +45,14 @@ public class P0111_AP : IAnalyzer
 
         plot3.Title("Full Trace");
         var sig3 = plot3.AddSignalMS(sweep);
+        sig3.Color = Colors.Blue;
         sig3.AlwaysUseLowDensityMode = true;
         sig3.LineWidth = 1.5f;
 
         plot3.Axes.Margins(horizontal: 0);
 
         plot4.Title("First AP (dV/dt)");
-        var sp = plot4.Add.ScatterLine((List<double>)apTrace.Values, (List<double>)dvdtTrace.Values);
+        var sp = plot4.Add.ScatterLine(apTrace.Values.ToArray(), dvdtTrace.Values.ToArray());
         sp.LineColor = Colors.C1;
         sp.LineWidth = 1.5f;
 
@@ -61,6 +62,6 @@ public class P0111_AP : IAnalyzer
         mp.AddSubplot(plot3, 1, 2, 0, 2);
         mp.AddSubplot(plot4, 1, 2, 1, 2);
 
-        return AnalysisResult.WithSingleMultiPlot(mp);
+        return AnalysisResult.Single(mp);
     }
 }
