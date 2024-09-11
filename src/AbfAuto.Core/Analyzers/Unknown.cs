@@ -8,27 +8,11 @@ public class Unknown : IAnalyzer
 {
     public AnalysisResult Analyze(ABF abf)
     {
-        Plot plot = new();
-        plot.DataBackground.Color = Colors.Red.WithAlpha(.1);
-
         Sweep sweep = abf.GetAllData();
 
-        bool isLongAbf = abf.AbfLength() > 10 * 60;
-        if (isLongAbf)
-        {
-            sweep = sweep.Decimate(50);
-            plot.Add.Signal(sweep.Values, sweep.SamplePeriod * 60);
-            plot.XLabel("Time (minutes)");
-        }
-        else
-        {
-
-            plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
-            plot.XLabel("Time (seconds)");
-        }
-
-        plot.WithSignalLineWidth(1.5);
-        plot.WithTightHorizontalMargins();
+        Plot plot = CommonPlots.AllSweeps.Consecutive(sweep)
+            .WithSignalLineWidth(1.5)
+            .WithTightHorizontalMargins();
 
         var an = plot.Add.Annotation($"Unsupported Protocol");
         an.LabelFontSize = 26;
@@ -37,6 +21,7 @@ public class Unknown : IAnalyzer
         an.LabelBold = true;
 
         plot.Title($"{Path.GetFileName(abf.FilePath)}\n{abf.Protocol()}");
+        plot.DataBackground.Color = Colors.Red.WithAlpha(.1);
 
         return AnalysisResult.Single(plot);
     }

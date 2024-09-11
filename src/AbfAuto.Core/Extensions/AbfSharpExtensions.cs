@@ -20,4 +20,23 @@ public static class AbfSharpExtensions
 
         return new Sweep(values, abf.SampleRate, 0, channelIndex, 0);
     }
+
+    public static Sweep GetAllDataNth(this AbfSharp.ABF abf, int channelIndex = 0, int decimate = 50)
+    {
+        int samplesPerSweep = abf.Header.AbfFileHeader.lNumSamplesPerEpisode / abf.Header.AbfFileHeader.nADCNumChannels;
+        int sweepCount = abf.Header.AbfFileHeader.lActualEpisodes;
+        double[] values = new double[samplesPerSweep * sweepCount / decimate];
+
+        int offset = 0;
+        for (int sweepIndex = 0; sweepIndex < abf.SweepCount; sweepIndex++)
+        {
+            float[] sweepValues = abf.GetSweep(sweepIndex, channelIndex);
+            for (int i = 0; i < sweepValues.Length; i += decimate)
+            {
+                values[offset++] = sweepValues[i];
+            }
+        }
+
+        return new Sweep(values, abf.SampleRate / decimate, 0, channelIndex, 0);
+    }
 }

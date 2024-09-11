@@ -7,18 +7,40 @@ public static class MemtestLogic
 {
     public static MemtestResult GetMeanMemtest(AbfSharp.ABF abf)
     {
-        MemtestResult[] allResults = Enumerable
-            .Range(0, abf.SweepCount)
-            .Select(x => GetSweepMemtest(abf, x))
-            .ToArray();
+        MemtestResult?[] allResults = GetMemtestBySweep(abf);
+
+        MemtestResult[] valid = allResults.Where(x => x is not null).Select(x => (MemtestResult)x!).ToArray();
+
+        if (valid.Length == 0)
+            return new();
 
         return new()
         {
-            Ih = allResults.Select(x => x.Ih).Average(),
-            Ra = allResults.Select(x => x.Ra).Average(),
-            Rm = allResults.Select(x => x.Rm).Average(),
-            CmStep = allResults.Select(x => x.CmStep).Average(),
+            Ih = valid.Select(x => x.Ih).Average(),
+            Ra = valid.Select(x => x.Ra).Average(),
+            Rm = valid.Select(x => x.Rm).Average(),
+            CmStep = valid.Select(x => x.CmStep).Average(),
         };
+    }
+
+    public static MemtestResult?[] GetMemtestBySweep(AbfSharp.ABF abf)
+    {
+        return Enumerable
+            .Range(0, abf.SweepCount)
+            .Select(x => TryGetSweepMemtest(abf, x))
+            .ToArray();
+    }
+
+    public static MemtestResult? TryGetSweepMemtest(AbfSharp.ABF abf, int sweepIndex)
+    {
+        try
+        {
+            return GetSweepMemtest(abf, sweepIndex);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public static MemtestResult GetSweepMemtest(AbfSharp.ABF abf, int sweepIndex)
@@ -30,21 +52,41 @@ public static class MemtestLogic
         // Get dV and dI from the hyperpolarizing step epoch relative to the pre-step epoch
         Epoch[] epochs = Enumerable.Range(0, abf.Header.AbfFileHeader.fEpochInitLevel.Length).Select(x => new Epoch(abf, x)).ToArray();
 
-        Trace preStepTrace = sweepTrace.SubTraceByEpoch(epochs[0]);
-        double preStepCurrentMean = preStepTrace.Mean();
+        int downwardEpochIndex = 0;
+        for (int i = 1; i < epochs.Length; i++)
+        {
+            if (epochs[i].Level < epochs[i - 1].Level)
+            {
+                downwardEpochIndex = i;
+                break;
+            }
+        }
 
-        Trace stepTrace = sweepTrace.SubTraceByEpoch(epochs[1]);
+        Trace preStepTrace = (downwardEpochIndex == 0)
+            ? sweepTrace.SubTraceByIndex(0, epochs[0].IndexFirst)
+            : sweepTrace.SubTraceByEpoch(epochs[downwardEpochIndex - 1]);
+
+        Trace stepTrace = sweepTrace.SubTraceByEpoch(epochs[downwardEpochIndex]);
+
+        int postStepIndex1 = epochs[downwardEpochIndex].IndexLast;
+        int postStepIndex2 = postStepIndex1 + stepTrace.Values.Length;
+        Trace postStepTrace = sweepTrace.SubTraceByIndex(postStepIndex1, postStepIndex2);
+
+        double preStepCurrentMean = preStepTrace.Mean();
         double stepCurrentMean = stepTrace.SubTraceByFraction(0.75, 1).Mean();
+        double beforeLevel = (downwardEpochIndex == 0)
+            ? abf.Header.AbfFileHeader.fDACHoldingLevel[0]
+            : epochs[downwardEpochIndex - 1].Level;
+        double stepLevel = epochs[downwardEpochIndex].Level;
 
         mt.Ih = preStepCurrentMean;
-        mt.dV = Math.Abs(epochs[0].Level - epochs[1].Level);
+        mt.dV = Math.Abs(beforeLevel - stepLevel);
         mt.dI = Math.Abs(preStepCurrentMean - stepCurrentMean);
 
         // Calculate time constant from the post-step epoch.
         // This is because we know the level we expect it to return to
         // from the pre-pulse epoch.
 
-        Trace postStepTrace = sweepTrace.SubTraceByEpoch(epochs[2]);
         postStepTrace.SubtractInPlace(preStepCurrentMean);
 
         // isolate region between a range of the height

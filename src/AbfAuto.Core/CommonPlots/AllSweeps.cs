@@ -29,14 +29,30 @@ public static class AllSweeps
 
     public static ScottPlot.Plot Consecutive(AbfSharp.ABF abf, int channelIndex = 0)
     {
-        Sweep sweep = abf.GetAllData(channelIndex);
+        bool isLongAbf = abf.AbfLength() > 10 * 60;
+        Sweep sweep = isLongAbf
+            ? abf.GetAllDataNth(channelIndex) 
+            : abf.GetAllData(channelIndex);
         return Consecutive(sweep);
     }
 
     public static ScottPlot.Plot Consecutive(Sweep sweep)
     {
         Plot plot = new();
-        plot.Add.Signal(sweep.Values, sweep.SamplePeriod / 60);
+
+        if (sweep.Duration > 10 * 60)
+        {
+            plot.Add.Signal(sweep.Values, sweep.SamplePeriod / 60);
+            plot.XLabel("Time (minutes)");
+        }
+        else
+        {
+            plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
+            plot.XLabel("Time (seconds)");
+        }
+
+        plot.WithTightHorizontalMargins();
+
         return plot;
     }
 }
