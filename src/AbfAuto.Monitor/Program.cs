@@ -1,4 +1,4 @@
-namespace AbfAuto.ExperimentGui;
+namespace AbfAuto.Monitor;
 
 static class Program
 {

@@ -25,7 +25,7 @@ public static class AbfSharpExtensions
 
     public static string Protocol(this AbfSharp.ABF abf)
     {
-        return Path.GetFileName(abf.ProtocolPath());
+        return Path.GetFileName(abf.ProtocolPath()).Trim();
     }
 
     public static string AbfID(this AbfSharp.ABF abf)

@@ -53,6 +53,11 @@ public static class SweepExtensions
         return new Sweep(sweep.Values, sweep.SampleRate, sweep.SweepIndex, sweep.ChannelIndex, newStartTime);
     }
 
+    public static Sweep WithSampleRate(this Sweep sweep, double newSampleRate)
+    {
+        return new Sweep(sweep.Values, newSampleRate, sweep.SweepIndex, sweep.ChannelIndex, sweep.FileStartTime);
+    }
+
     public static Sweep SubSweepByIndex(this Sweep sweep, int i1, int i2)
     {
         double[] newValues = sweep.Values.Skip(i1).Take(i2 - i1).ToArray();
@@ -149,5 +154,17 @@ public static class SweepExtensions
         }
 
         return sweep.WithValues(values2);
+    }
+
+    public static Sweep Decimate(this Sweep sweep, int count)
+    {
+        int length = sweep.Values.Count / count;
+        double[] values = new double[length];
+        for (int i = 0; i < length; i++)
+        {
+            values[i] = sweep.Values[i * count];
+        }
+
+        return sweep.WithValues(values).WithSampleRate(sweep.SampleRate / count);
     }
 }

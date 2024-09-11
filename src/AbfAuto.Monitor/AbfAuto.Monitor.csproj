@@ -10,11 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="ScottPlot.WinForms" Version="5.0.35" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\..\AbfSharp\src\AbfSharp\ABFsharp.csproj" />
+        <ProjectReference Include="..\AbfAuto.Core\AbfAuto.Core.csproj" />
     </ItemGroup>
 
 </Project>
