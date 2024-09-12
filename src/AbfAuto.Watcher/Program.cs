@@ -13,8 +13,8 @@ while (true)
     string s = paths.Length == 1 ? "" : "s";
     Status($"Watching {paths.Length} folder{s} ({GetMemoryUsed():N2} MB used)");
 
-    string[] abfFilesNeedingAnalysis = GetAbfFilesNeedingAnalysis(paths);
-    AutoAnalyzeAbfs(abfFilesNeedingAnalysis);
+    string[] files = GetFilesNeedingAnalysis(paths);
+    AutoAnalyze(files);
 
     Thread.Sleep(1000);
 }
@@ -32,16 +32,16 @@ static string[] GetWatchedFolders()
     }
 }
 
-static void AutoAnalyzeAbfs(string[] abfFilesNeedingAnalysis)
+static void AutoAnalyze(string[] filePaths)
 {
-    if (abfFilesNeedingAnalysis.Length == 0)
+    if (filePaths.Length == 0)
         return;
 
     Console.WriteLine();
-    Console.WriteLine($"Located {abfFilesNeedingAnalysis.Length} ABF file(s) needing analysis");
-    foreach (string abfFilePath in abfFilesNeedingAnalysis)
+    Console.WriteLine($"Located {filePaths.Length} file(s) needing analysis");
+    foreach (string filePath in filePaths)
     {
-        ProcessStartInfo processInfo = new(AUTO_ANALYSIS_EXE, abfFilePath)
+        ProcessStartInfo processInfo = new(AUTO_ANALYSIS_EXE, "\"" + filePath + "\"")
         {
             CreateNoWindow = false,
         };
@@ -51,12 +51,14 @@ static void AutoAnalyzeAbfs(string[] abfFilesNeedingAnalysis)
     }
 }
 
-static string[] GetAbfFilesNeedingAnalysis(string[] folderPaths)
+static string[] GetFilesNeedingAnalysis(string[] folderPaths)
 {
-    List<string> abfFilesNeedingAnalysis = [];
+    List<string> filesNeedingAnalysis = [];
 
     foreach (string folderPath in folderPaths)
     {
+        string[] tifFilePaths = Directory.GetFiles(folderPath, "*.tif");
+
         List<string> abfFilePaths = [];
         foreach (string abfPath in Directory.GetFiles(folderPath, "*.abf"))
         {
@@ -70,26 +72,37 @@ static string[] GetAbfFilesNeedingAnalysis(string[] folderPaths)
         string analysisFolder = Path.Combine(folderPath, "_autoanalysis");
         if (!Directory.Exists(analysisFolder))
         {
-            abfFilesNeedingAnalysis.AddRange(abfFilePaths);
+            filesNeedingAnalysis.AddRange(abfFilePaths);
+            filesNeedingAnalysis.AddRange(tifFilePaths);
             continue;
         }
 
-        string[] pngFiles = Directory.GetFiles(analysisFolder, "*.png");
+        string[] pngFilenames = Directory
+            .GetFiles(analysisFolder, "*.png")
+            .Select(x => Path.GetFileName(x))
+            .ToArray();
+
+        foreach (string tifFilePath in tifFilePaths)
+        {
+            string pngFilename = Path.GetFileName(tifFilePath) + ".png";
+            if (!pngFilenames.Contains(pngFilename))
+                filesNeedingAnalysis.Add(tifFilePath);
+        }
+
         foreach (string abfFilePath in abfFilePaths)
         {
             string abfID = Path.GetFileNameWithoutExtension(abfFilePath);
 
-            bool hasAnalysisImages = pngFiles
-                .Select(x => Path.GetFileName(x))
+            bool hasAnalysisImages = pngFilenames
                 .Where(x => x.StartsWith(abfID, StringComparison.InvariantCultureIgnoreCase))
                 .Any();
 
             if (!hasAnalysisImages)
-                abfFilesNeedingAnalysis.Add(abfFilePath);
+                filesNeedingAnalysis.Add(abfFilePath);
         }
     }
 
-    return abfFilesNeedingAnalysis.ToArray();
+    return filesNeedingAnalysis.ToArray();
 }
 
 static void Status(string message)
@@ -98,6 +111,7 @@ static void Status(string message)
     message = $"[{DateTime.Now}] {message}";
     Console.CursorVisible = false;
     Console.CursorLeft = 0;
+    Console.ForegroundColor = ConsoleColor.Gray;
     Console.Write(message);
 }
 

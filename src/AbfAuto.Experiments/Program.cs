@@ -7,8 +7,12 @@ public static class Program
 {
     public static void Main()
     {
-        string filePath = @"X:\Data\Alchem\Donepezil\BLA\07-28-2021\2021_07_28_DIC1_0002.abf";
-        AnalyzeAbfFile(filePath);
+        //string filePath = @"X:\Data\Alchem\Donepezil\BLA\07-28-2021\2021_07_28_DIC1_0002.abf";
+        //AnalyzeAbfFile(filePath);
+
+        string tifFile = @"X:\Data\Alchem\Donepezil\BLA\07-28-2021\2021_07_28_DIC1_0000.tif";
+        string saved = AbfAuto.Core.TifFile.AutoAnalyze(tifFile);
+        Console.WriteLine(saved);
 
         //string folderPath = @"X:\Data\zProjects\SST diabetes\LTS neuron SST\abfs\2024-08-16-DIC1";
         //AnalyzeAbfFolder(folderPath);
