@@ -1,4 +1,4 @@
-﻿namespace AbfAuto.Monitor;
+﻿namespace AbfAuto.Gui;
 
 public static class AbfFolderScan
 {

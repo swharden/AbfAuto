@@ -1,4 +1,4 @@
-namespace AbfAuto.Monitor;
+namespace AbfAuto.Gui;
 
 public partial class Form1 : Form
 {
@@ -11,6 +11,8 @@ public partial class Form1 : Form
     public Form1()
     {
         InitializeComponent();
+
+        label1.Text = string.Empty;
         tbPath.Text = @"X:\Data\Alchem\Donepezil\BLA\07-28-2021";
 
         btnAnalyze.Click += (s, e) => AnalyzePath(tbPath.Text);

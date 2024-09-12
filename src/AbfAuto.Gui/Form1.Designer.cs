@@ -1,4 +1,4 @@
-﻿namespace AbfAuto.Monitor;
+﻿namespace AbfAuto.Gui;
 
 partial class Form1
 {
@@ -36,11 +36,11 @@ partial class Form1
         richTextBox1 = new RichTextBox();
         SuspendLayout();
         // 
-        // tbFolder
+        // tbPath
         // 
         tbPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         tbPath.Location = new Point(12, 12);
-        tbPath.Name = "tbFolder";
+        tbPath.Name = "tbPath";
         tbPath.Size = new Size(894, 31);
         tbPath.TabIndex = 6;
         // 
@@ -53,10 +53,10 @@ partial class Form1
         label1.TabIndex = 9;
         label1.Text = "Waiting...";
         // 
-        // btnScan
+        // btnAnalyze
         // 
         btnAnalyze.Location = new Point(12, 49);
-        btnAnalyze.Name = "btnScan";
+        btnAnalyze.Name = "btnAnalyze";
         btnAnalyze.Size = new Size(95, 35);
         btnAnalyze.TabIndex = 7;
         btnAnalyze.Text = "Analyze";
@@ -73,6 +73,7 @@ partial class Form1
         // 
         // listBox1
         // 
+        listBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         listBox1.BackColor = SystemColors.Control;
         listBox1.FormattingEnabled = true;
         listBox1.ItemHeight = 25;
@@ -83,6 +84,7 @@ partial class Form1
         // 
         // richTextBox1
         // 
+        richTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         richTextBox1.BackColor = SystemColors.ControlDark;
         richTextBox1.BorderStyle = BorderStyle.FixedSingle;
         richTextBox1.Location = new Point(12, 280);
@@ -104,7 +106,7 @@ partial class Form1
         Controls.Add(btnReset);
         Name = "Form1";
         StartPosition = FormStartPosition.CenterScreen;
-        Text = "Form1";
+        Text = "Manual ABF and Folder Analyzer";
         ResumeLayout(false);
         PerformLayout();
     }
