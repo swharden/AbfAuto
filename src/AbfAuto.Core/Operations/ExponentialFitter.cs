@@ -2,59 +2,51 @@
 
 public class ExponentialFitter
 {
-    public double A { get; private set; } = 1;
-    public double B { get; private set; } = 0;
-    public double Tau { get; private set; } = 20;
+    public double Offset { get; }
+    public double Scale { get; }
+    public double RateConstant { get; }
+    public double Tau => Math.Abs(1.0 / RateConstant);
 
-    public ExponentialFitter(double[] values)
+    public ExponentialFitter(double[] values, double steadyState)
     {
-        A = values.First() - values.Last();
-        B = values.Last();
-
-        int maxAttempts = 1_000;
-        int maxFlips = 50;
-
-        double tauDelta = 1;
-        bool previouslyTooHigh = false;
-        int flips = 0;
-        for (int attempt = 0; attempt < maxAttempts; attempt++)
-        {
-            double err = GetTotalError(values);
-            bool currentlyTooHigh = err > 0;
-            bool signFlipped = currentlyTooHigh != previouslyTooHigh;
-            if (signFlipped)
-            {
-                tauDelta *= 0.8;
-                flips += 1;
-            }
-            double nextTauDelta = currentlyTooHigh ? tauDelta : -tauDelta;
-            Tau += nextTauDelta;
-            previouslyTooHigh = currentlyTooHigh;
-            if (flips >= maxFlips)
-            {
-                break;
-            }
-        }
-    }
-
-    public double GetTotalError(double[] values)
-    {
-        double totalError = 0;
-        for (int i = 0; i < values.Length; i++)
-        {
-            double error = values[i] - GetY(i);
-            totalError += error;
-        }
-        return totalError;
+        // TODO: particle swarm
+        Offset = steadyState;
+        double[] xs = Enumerable.Range(0, values.Length).Select(x => (double)x).ToArray();
+        double[] ys = values.Select(x => x - Offset).ToArray();
+        double[] logYs = ys.Select(x => Math.Log(x)).ToArray();
+        (RateConstant, double intercept) = LeastSquaresFit(xs, logYs);
+        Scale = Math.Exp(intercept);
+        Console.WriteLine($"Y={Offset} + {Scale} *  Exp(x / {Tau})");
     }
 
     public double GetY(double x)
     {
-        return A * Math.Exp(-x / Tau) + B;
+        return Offset + Scale * Math.Exp(x * RateConstant);
     }
 
     public double[] GetYs(double[] xs)
     {
         return xs.Select(GetY).ToArray();
+    }
+
+    private static (double slope, double intercept) LeastSquaresFit(double[] xs, double[] ys)
+    {
+        double sumX = 0, sumY = 0, sumX2 = 0, sumXY = 0;
+
+        for (int i = 0; i < xs.Length; i++)
+        {
+            sumX += xs[i];
+            sumY += ys[i];
+            sumX2 += xs[i] * xs[i];
+            sumXY += xs[i] * ys[i];
+        }
+
+        double avgX = sumX / xs.Length;
+        double avgY = sumY / xs.Length;
+        double avgX2 = sumX2 / xs.Length;
+        double avgXY = sumXY / xs.Length;
+        double slope = (avgXY - avgX * avgY) / (avgX2 - avgX * avgX);
+        double intercept = (avgX2 * avgY - avgXY * avgX) / (avgX2 - avgX * avgX);
+        return (slope, intercept);
     }
 }

@@ -20,6 +20,7 @@ public static class MemtestLogic
             Ra = valid.Select(x => x.Ra).Average(),
             Rm = valid.Select(x => x.Rm).Average(),
             CmStep = valid.Select(x => x.CmStep).Average(),
+            Tau = valid.Select(x => x.Tau).Average(),
         };
     }
 
@@ -96,7 +97,7 @@ public static class MemtestLogic
         int index2 = GetFirstIndexBelow(postStepTrace.Values, .2 * maxValue, index1);
         double[] valuesToFit = postStepTrace.Values[index1..index2];
 
-        ExponentialFitter fitter = new(valuesToFit);
+        ExponentialFitter fitter = new(valuesToFit, preStepCurrentMean);
         mt.Tau = fitter.Tau / sweepTrace.SampleRate * 1000;
         double extrapolatedPeak = fitter.GetY(-maxIndex);
         double extrapolatedPeakDeltaI = extrapolatedPeak - preStepCurrentMean;
