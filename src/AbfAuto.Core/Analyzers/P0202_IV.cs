@@ -1,11 +1,11 @@
-﻿using AbfAuto.Core.Extensions;
-using AbfAuto.Core.SortLater;
-using ScottPlot;
+﻿using ScottPlot;
 
 namespace AbfAuto.Core.Analyzers;
 
 public class P0202_IV : IAnalyzer
 {
+    public record struct TimeRange(double Time1, double Time2);
+
     public AnalysisResult Analyze(AbfSharp.ABF abf)
     {
         TimeRange ssRange = new(2.3, 2.5);
@@ -61,12 +61,14 @@ public class P0202_IV : IAnalyzer
         return AnalysisResult.Single(mp);
     }
 
-    public static (double[] voltages, double[] currents) GetIvPoints(AbfSharp.ABF abf, TimeRange measureRange)
+    public static (double[] voltages, double[] currents) GetIvPoints(AbfSharp.ABF abf, TimeRange range)
     {
+        int i1 = (int)(abf.SampleRate * range.Time1);
+        int i2 = (int)(abf.SampleRate * range.Time2);
         double[] voltages = Generate.Consecutive(abf.SweepCount, 10, -110);
         double[] currents = Enumerable
             .Range(0, abf.SweepCount)
-            .Select(x => AbfSweep.FromAbf(abf, x).GetMean(measureRange))
+            .Select(x => abf.GetSweep2(x).Values[i1..i2].Average())
             .ToArray();
         return (voltages, currents);
     }

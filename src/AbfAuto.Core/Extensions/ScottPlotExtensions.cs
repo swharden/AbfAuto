@@ -1,6 +1,4 @@
-﻿using AbfAuto.Core.SortLater;
-
-namespace AbfAuto.Core.Extensions;
+﻿namespace AbfAuto.Core.Extensions;
 
 public static class ScottPlotExtensions
 {

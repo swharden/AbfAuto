@@ -1,6 +1,5 @@
 ﻿using AbfAuto.Core.EventDetection;
 using AbfAuto.Core.Extensions;
-using AbfAuto.Core.SortLater;
 using ScottPlot;
 
 namespace AbfAuto.Core.Analyzers;
