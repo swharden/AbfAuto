@@ -2,6 +2,18 @@
 
 public static class Analyze
 {
+    public static void Path(string path)
+    {
+        if (Directory.Exists(path))
+        {
+            Folder(path);
+        }
+        else
+        {
+            File(path);
+        }
+    }
+
     public static void Folder(string folderPath)
     {
         string[] abfFiles = Directory.GetFiles(folderPath, "*.abf");
@@ -12,7 +24,7 @@ public static class Analyze
         for (int i = 0; i < files.Length; i++)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"Analyzing File {i + 1} of {files.Length}: {Path.GetFileName(files[i])}");
+            Console.WriteLine($"Analyzing File {i + 1} of {files.Length}: {System.IO.Path.GetFileName(files[i])}");
             File(files[i]);
         }
     }
@@ -34,7 +46,7 @@ public static class Analyze
         }
         else
         {
-            throw new NotFiniteNumberException($"do not know how to auto-analyze: {Path.GetFileName(path)}");
+            throw new NotFiniteNumberException($"do not know how to auto-analyze: {System.IO.Path.GetFileName(path)}");
         }
 
         Console.ForegroundColor = ConsoleColor.Blue;

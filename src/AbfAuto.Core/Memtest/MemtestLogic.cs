@@ -1,5 +1,4 @@
 ﻿using AbfAuto.Core.Operations;
-using AbfAuto.Core.SortLater;
 
 namespace AbfAuto.Core.Memtest;
 
@@ -20,6 +19,7 @@ public static class MemtestLogic
             Ra = valid.Select(x => x.Ra).Average(),
             Rm = valid.Select(x => x.Rm).Average(),
             CmStep = valid.Select(x => x.CmStep).Average(),
+            CmRamp = valid.Select(x => x.CmRamp).Average(),
             Tau = valid.Select(x => x.Tau).Average(),
         };
     }
@@ -44,71 +44,132 @@ public static class MemtestLogic
         }
     }
 
-    private static MemtestResult CalculateMemtest(AbfSharp.ABF abf, int sweepIndex)
+    private static MemtestResult CalculateMemtest(AbfSharp.ABF abf, int sweepIndex, int channelIndex = 0)
     {
-        Trace sweepTrace = new(abf, sweepIndex);
+        Sweep sweep = abf.GetSweep2(sweepIndex, channelIndex);
 
+        // add values to the membrane test as they are calculated
         MemtestResult mt = new();
 
-        // Get dV and dI from the hyperpolarizing step epoch relative to the pre-step epoch
-        Epoch[] epochs = Enumerable.Range(0, abf.Header.AbfFileHeader.fEpochInitLevel.Length).Select(x => new Epoch(abf, x)).ToArray();
+        // identify the membrane test epoch (the first hyperpolarization pulse)
+        Epoch[] epochs = abf.GetEpochs();
+        int downwardEpochIndex = GetHyperpolarizingStepIndex(epochs);
 
-        int downwardEpochIndex = 0;
+        // isolate the segments before, during, and after the hyperpolarization pulse
+        Sweep preStep = (downwardEpochIndex == 0)
+            ? sweep.SubTraceByIndex(0, epochs[0].IndexFirst)
+            : sweep.SubTraceByEpoch(epochs[downwardEpochIndex - 1]);
+        Sweep step = sweep.SubTraceByEpoch(epochs[downwardEpochIndex]);
+        int postIndex1 = epochs[downwardEpochIndex].IndexLast;
+        int postIndex2 = postIndex1 + step.Values.Length;
+        Sweep postStep = sweep.SubTraceByIndex(postIndex1, postIndex2);
+
+        // determine steady state currents and dI
+        double preStepCurrentMean = preStep.Values.Average();
+        double stepCurrentMean = step.SubTraceByFraction(0.75, 1).Values.Average();
+        mt.Ih = preStepCurrentMean;
+        mt.dI = Math.Abs(preStepCurrentMean - stepCurrentMean);
+
+        // determine the dV
+        double preStepVoltage = (downwardEpochIndex == 0)
+            ? abf.Header.AbfFileHeader.fDACHoldingLevel[0]
+            : epochs[downwardEpochIndex - 1].Level;
+        double stepVoltage = epochs[downwardEpochIndex].Level;
+        mt.dV = Math.Abs(preStepVoltage - stepVoltage);
+
+        // The capacitive transient after the hyperpolarization step will be further analyzed.
+        // Subtract steady state current so the exponential curve ends at 0, simplifying curve fitting.
+        postStep.SubtractInPlace(preStepCurrentMean);
+
+        // isolate region to fit (points not too close to the peak or steady state level)
+        int maxIndex = postStep.GetMaximumIndex();
+        double maxValue = postStep.Values[maxIndex];
+        int index1 = postStep.GetFirstIndexBelow(.8 * maxValue, maxIndex);
+        int index2 = postStep.GetFirstIndexBelow(.2 * maxValue, index1);
+        double[] valuesToFit = postStep.Values[index1..index2];
+
+        // fit the curve to get the time constant
+        ExponentialFitter fitter = new(valuesToFit, preStepCurrentMean);
+
+        // get time constant from the fitter
+        mt.Tau = fitter.Tau / sweep.SampleRate * 1000;
+
+        // extrapolate backwards to predict the instantaneous peak
+        double extrapolatedPeak = fitter.GetY(-maxIndex);
+        double extrapolatedPeakDeltaI = extrapolatedPeak - preStepCurrentMean;
+
+        // calculate the remaining memtest properties now that we have all the values
+        mt.Ra = mt.dV / extrapolatedPeakDeltaI * 1000;
+        mt.Rm = ((mt.dV * 1e-3) - (mt.Ra * 1e6) * (mt.dI * 1e-12)) / (mt.dI * 1e-12) / 1e6;
+        mt.CmStep = (mt.Tau * 1e-3) / (1 / (1 / (mt.Ra * 1e6) + 1 / (mt.Rm * 1e6))) * 1e12;
+        mt.CmRamp = GetCmRamp(sweep, epochs);
+
+        return mt;
+    }
+
+    private static double GetCmRamp(Sweep sweep, Epoch[] epochs)
+    {
+        int rampIndex = GetHyperpolarizingRampIndex(epochs);
+        if (rampIndex == 0)
+            return 0;
+
+        // isolate the two ramps
+        Epoch falling = epochs[rampIndex];
+        Epoch rising = epochs[rampIndex + 1];
+
+        // measure the rate of the voltage change
+        double dV = rising.Level - falling.Level;
+        double dT = falling.EndTime - falling.StartTime;
+        double dVslope = dV / dT;
+
+        // get the values for each epoch and reverse one of them
+        double[] values1 = sweep.Values[falling.IndexFirst..falling.IndexLast];
+        double[] values2 = sweep.Values[rising.IndexFirst..rising.IndexLast];
+        if (values1.Length != values2.Length)
+            throw new InvalidOperationException("ramps must have equal length");
+        Array.Reverse(values2);
+
+        // get the mean difference between each ramp and the center
+        int count = values1.Length / 3;
+        double sum = 0;
+        for (int i = count; i < count * 2; i++)
+            sum += values2[i] - values1[i];
+        double mean = sum / count;
+        double rampDeltaI = mean / 2;
+
+        // calculate capacitance as the current difference relative to the rate of voltage change
+        double cmRamp = rampDeltaI / dVslope * 1000;
+
+        return cmRamp;
+    }
+
+    private static int GetHyperpolarizingStepIndex(Epoch[] epochs)
+    {
         for (int i = 1; i < epochs.Length; i++)
         {
-            if (epochs[i].Level < epochs[i - 1].Level)
+            bool isStep = epochs[i].EpochType == AbfSharp.EpochType.Step;
+            bool isHyperpolarizing = epochs[i].Level < epochs[i - 1].Level;
+            if (isStep && isHyperpolarizing)
             {
-                downwardEpochIndex = i;
-                break;
+                return i;
             }
         }
 
-        Trace preStepTrace = (downwardEpochIndex == 0)
-            ? sweepTrace.SubTraceByIndex(0, epochs[0].IndexFirst)
-            : sweepTrace.SubTraceByEpoch(epochs[downwardEpochIndex - 1]);
+        return 0;
+    }
 
-        Trace stepTrace = sweepTrace.SubTraceByEpoch(epochs[downwardEpochIndex]);
+    private static int GetHyperpolarizingRampIndex(Epoch[] epochs)
+    {
+        for (int i = 1; i < epochs.Length; i++)
+        {
+            bool isRamp = epochs[i].EpochType == AbfSharp.EpochType.Ramp;
+            bool isHyperpolarizing = epochs[i].Level < epochs[i - 1].Level;
+            if (isRamp && isHyperpolarizing)
+            {
+                return i;
+            }
+        }
 
-        int postStepIndex1 = epochs[downwardEpochIndex].IndexLast;
-        int postStepIndex2 = postStepIndex1 + stepTrace.Values.Length;
-        Trace postStepTrace = sweepTrace.SubTraceByIndex(postStepIndex1, postStepIndex2);
-
-        double preStepCurrentMean = preStepTrace.Mean();
-        double stepCurrentMean = stepTrace.SubTraceByFraction(0.75, 1).Mean();
-        double beforeLevel = (downwardEpochIndex == 0)
-            ? abf.Header.AbfFileHeader.fDACHoldingLevel[0]
-            : epochs[downwardEpochIndex - 1].Level;
-        double stepLevel = epochs[downwardEpochIndex].Level;
-
-        mt.Ih = preStepCurrentMean;
-        mt.dV = Math.Abs(beforeLevel - stepLevel);
-        mt.dI = Math.Abs(preStepCurrentMean - stepCurrentMean);
-
-        // Calculate time constant from the post-step epoch.
-        // This is because we know the level we expect it to return to
-        // from the pre-pulse epoch.
-
-        postStepTrace.SubtractInPlace(preStepCurrentMean);
-
-        // isolate region between a range of the height
-        int maxIndex = postStepTrace.GetMaximumIndex();
-        double maxValue = postStepTrace.Values[maxIndex];
-        int index1 = postStepTrace.GetFirstIndexBelow(.8 * maxValue, maxIndex);
-        int index2 = postStepTrace.GetFirstIndexBelow(.2 * maxValue, index1);
-        double[] valuesToFit = postStepTrace.Values[index1..index2];
-
-        ExponentialFitter fitter = new(valuesToFit, preStepCurrentMean);
-        mt.Tau = fitter.Tau / sweepTrace.SampleRate * 1000;
-        double extrapolatedPeak = fitter.GetY(-maxIndex);
-        double extrapolatedPeakDeltaI = extrapolatedPeak - preStepCurrentMean;
-        mt.Ra = mt.dV / extrapolatedPeakDeltaI * 1000;
-
-        // calculate Rm to account for Ra
-        mt.Rm = ((mt.dV * 1e-3) - (mt.Ra * 1e6) * (mt.dI * 1e-12)) / (mt.dI * 1e-12) / 1e6;
-
-        // calculate Cm now that Rm is known
-        mt.CmStep = (mt.Tau * 1e-3) / (1 / (1 / (mt.Ra * 1e6) + 1 / (mt.Rm * 1e6))) * 1e12;
-
-        return mt;
+        return 0;
     }
 }

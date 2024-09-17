@@ -22,6 +22,8 @@ public record struct MemtestResult
             : $"Membrane Resistance: {Rm/1000:N2} GΩ");
         sb.AppendLine($"Access Resistance: {Ra:N2} MΩ");
         sb.AppendLine($"Capacitance (Step): {CmStep:N2} pA");
+        if (CmRamp > 0)
+            sb.AppendLine($"Capacitance (Ramp): {CmRamp:N2} pA");
         return sb.ToString().Trim();
     }
 }

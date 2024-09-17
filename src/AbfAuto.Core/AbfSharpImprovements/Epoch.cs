@@ -1,10 +1,13 @@
-﻿namespace AbfAuto.Core;
+﻿using AbfSharp;
+
+namespace AbfAuto.Core;
 
 public class Epoch
 {
     public int EpochIndex { get; }
     public string EpochName => ((char)('A' + (char)EpochIndex)).ToString();
     public int EpochTypeCode { get; }
+    public EpochType EpochType { get; }
     public double Level { get; }
     public double LevelDelta { get; }
     public int IndexFirst { get; }
@@ -41,6 +44,7 @@ public class Epoch
 
         SamplePeriod = abf.SamplePeriod;
         EpochTypeCode = abf.Header.AbfFileHeader.nEpochType[epochIndex];
+        EpochType = (EpochType)EpochTypeCode;
 
         PulsePeriodSamples = abf.Header.AbfFileHeader.lEpochPulsePeriod[epochIndex];
         PulseWidthSamples = abf.Header.AbfFileHeader.lEpochPulseWidth[epochIndex];

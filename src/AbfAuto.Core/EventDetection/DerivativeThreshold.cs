@@ -1,6 +1,4 @@
-﻿using static AbfAuto.Core.EventDetection.DerivativeThreshold;
-
-namespace AbfAuto.Core.EventDetection;
+﻿namespace AbfAuto.Core.EventDetection;
 
 public static class DerivativeThreshold
 {
@@ -32,7 +30,7 @@ public static class DerivativeThreshold
         var ys = sweep.Values;
 
         int i = dtPoints;
-        while (i < ys.Count)
+        while (i < ys.Length)
         {
             double dv = ys[i] - ys[i - dtPoints];
 
@@ -42,10 +40,10 @@ public static class DerivativeThreshold
                 indexes.Add(i);
 
                 // move forward until we reach the peak
-                for (; i < ys.Count && ys[i] >= ys[i - 1]; i++) { }
+                for (; i < ys.Length && ys[i] >= ys[i - 1]; i++) { }
 
                 // move forward until we reach the nadir
-                for (; i < ys.Count && ys[i] <= ys[i - 1]; i++) { }
+                for (; i < ys.Length && ys[i] <= ys[i - 1]; i++) { }
             }
 
             i++;

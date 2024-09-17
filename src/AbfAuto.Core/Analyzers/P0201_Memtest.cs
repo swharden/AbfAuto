@@ -1,5 +1,4 @@
 ﻿using AbfAuto.Core.Memtest;
-using AbfAuto.Core.SortLater;
 using ScottPlot;
 
 namespace AbfAuto.Core.Analyzers;
@@ -16,7 +15,7 @@ public class P0201_Memtest : IAnalyzer
 
         for (int i = 0; i < abf.SweepCount; i++)
         {
-            Trace sweepTrace = new(abf, i);
+            Sweep sweepTrace = new(abf, i);
             var sig = plot.Add.Signal(sweepTrace.Values, sweepTrace.SamplePeriod);
             sig.Color = colors[i];
             sig.AlwaysUseLowDensityMode = true;

@@ -1,19 +1,16 @@
-﻿using ScottPlot.Colormaps;
-using ScottPlot.TickGenerators.TimeUnits;
-
-namespace AbfAuto.Core;
+﻿namespace AbfAuto.Core;
 
 public class Sweep
 {
-    public IReadOnlyList<double> Values { get; }
+    public double[] Values { get; private set; }
     public double SampleRate { get; }
     public double SamplePeriod { get; }
     public int SweepIndex { get; }
     public int ChannelIndex { get; }
     public double FileStartTime { get; }
-    public double Duration => Values.Count / SampleRate;
+    public double Duration => Values.Length / SampleRate;
 
-    public Sweep(IReadOnlyList<double> values, double sampleRate, int sweepIndex, int channelIndex, double fileStartTime)
+    public Sweep(double[] values, double sampleRate, int sweepIndex, int channelIndex, double fileStartTime)
     {
         Values = values;
         SampleRate = sampleRate;
@@ -67,7 +64,7 @@ public static class SweepExtensions
 
     public static Sweep Derivative(this Sweep sweep, int delta = 1)
     {
-        double[] newValues = new double[sweep.Values.Count - delta];
+        double[] newValues = new double[sweep.Values.Length - delta];
         for (int i = 0; i < newValues.Length; i++)
         {
             newValues[i] = sweep.Values[i + delta] - sweep.Values[i];
@@ -78,7 +75,7 @@ public static class SweepExtensions
 
     public static Sweep Rectified(this Sweep sweep)
     {
-        double[] newValues = new double[sweep.Values.Count];
+        double[] newValues = new double[sweep.Values.Length];
 
         for (int i = 0; i < newValues.Length; i++)
         {
@@ -96,7 +93,7 @@ public static class SweepExtensions
 
     public static Sweep Smooth(this Sweep sweep, int pointCount)
     {
-        double[] smooth = new double[sweep.Values.Count];
+        double[] smooth = new double[sweep.Values.Length];
 
         // smooth from left to right
         double runningSum = 0;
@@ -147,7 +144,7 @@ public static class SweepExtensions
     {
         Sweep trend = sweep.Smooth(pointCount);
 
-        double[] values2 = new double[sweep.Values.Count];
+        double[] values2 = new double[sweep.Values.Length];
         for (int i = 0; i < values2.Length; i++)
         {
             values2[i] = sweep.Values[i] - trend.Values[i];
@@ -158,7 +155,7 @@ public static class SweepExtensions
 
     public static Sweep Decimate(this Sweep sweep, int count)
     {
-        int length = sweep.Values.Count / count;
+        int length = sweep.Values.Length / count;
         double[] values = new double[length];
         for (int i = 0; i < length; i++)
         {
@@ -166,5 +163,59 @@ public static class SweepExtensions
         }
 
         return sweep.WithValues(values).WithSampleRate(sweep.SampleRate / count);
+    }
+
+    public static Sweep SubTraceByIndex(this Sweep sweep, int i1, int i2)
+    {
+        int length = i2 - i1;
+        double[] values = new double[length];
+        Array.Copy(sweep.Values, i1, values, 0, length);
+        return sweep.WithValues(values);
+    }
+
+    public static Sweep SubTraceByFraction(this Sweep sweep, double frac1, double frac2)
+    {
+        int i1 = Math.Clamp((int)(frac1 * sweep.Values.Length), 0, sweep.Values.Length - 1);
+        int i2 = Math.Clamp((int)(frac2 * sweep.Values.Length), 0, sweep.Values.Length - 1);
+        return SubTraceByIndex(sweep, i1, i2);
+    }
+
+    public static Sweep SubTraceByEpoch(this Sweep sweep, Epoch epoch)
+    {
+        return SubTraceByIndex(sweep, epoch.IndexFirst, epoch.IndexLast);
+    }
+
+    public static void SubtractInPlace(this Sweep sweep, double value)
+    {
+        for (int i = 0; i < sweep.Values.Length; i++)
+        {
+            sweep.Values[i] -= value;
+        }
+    }
+
+    public static int GetMaximumIndex(this Sweep sweep)
+    {
+        int maxIndex = 0;
+        double maxValue = double.NegativeInfinity;
+        for (int i = 0; i < sweep.Values.Length; i++)
+        {
+            if (sweep.Values[i] > maxValue)
+            {
+                maxValue = sweep.Values[i];
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
+    public static int GetFirstIndexBelow(this Sweep sweep, double target, int firstIndex = 0)
+    {
+        for (int i = firstIndex; i < sweep.Values.Length; i++)
+        {
+            if (sweep.Values[i] < target)
+                return i;
+        };
+
+        throw new InvalidOperationException("values never went below target");
     }
 }
