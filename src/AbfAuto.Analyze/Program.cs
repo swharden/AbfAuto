@@ -10,7 +10,7 @@ if (!File.Exists(path))
 
 if (path.EndsWith(".abf", StringComparison.InvariantCultureIgnoreCase))
 {
-    string[] savedFiles = AbfAuto.Core.Analyze.AnalyzeAbfFile(path);
+    string[] savedFiles = AbfAuto.Core.Analyze.AbfFile(path);
     Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine(string.Join("\n", savedFiles));
 }

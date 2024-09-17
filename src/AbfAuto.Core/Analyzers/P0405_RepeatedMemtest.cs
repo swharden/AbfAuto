@@ -21,6 +21,7 @@ internal class P0405_RepeatedMemtest : IAnalyzer
         plotIh.WithVerticalLinesAtTagTimes(abf);
         plotIh.Title("Holding Current");
         plotIh.Axes.AutoScale();
+        plotIh.YLabel("Current (pA)");
 
         Plot plotRm = new();
         var spRm = plotRm.Add.ScatterPoints(sweepTimes2, mts2.Select(x => x.Rm).ToArray());
@@ -30,6 +31,7 @@ internal class P0405_RepeatedMemtest : IAnalyzer
         plotRm.Title("Membrane Resistance");
         plotRm.Axes.AutoScale();
         plotRm.Axes.SetLimits(bottom: 0);
+        plotRm.YLabel("Resistance (MΩ)");
 
         Plot plotRa = new();
         var spRa = plotRa.Add.ScatterPoints(sweepTimes2, mts2.Select(x => x.Ra).ToArray());
@@ -39,11 +41,12 @@ internal class P0405_RepeatedMemtest : IAnalyzer
         plotRa.Title("Access Resistance");
         plotRa.Axes.AutoScale();
         plotRa.Axes.SetLimits(bottom: 0);
+        plotRa.YLabel("Resistance (MΩ)");
 
         Plot plotFull = CommonPlots.AllSweeps.Consecutive(abf);
-        plotFull.WithXLabelMinutes();
         plotFull.WithVerticalLinesAtTagTimes(abf);
         plotFull.Title("Full Recording");
+        plotFull.YLabel("Current (pA)");
 
         MultiPlot2 mp = new();
         mp.AddSubplot(plotIh, 0, 2, 0, 2);

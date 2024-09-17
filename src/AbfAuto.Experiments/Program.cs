@@ -1,11 +1,5 @@
-﻿using AbfAuto.Core;
+﻿/* Use this program while developing to test auto-analysis routines */
 
-string filePath = @"X:\Data\zProjects\OT-Tom dendritic conductivity and Calcium homeostasis\Experiments\alpha MSH\2024-09-03_ 1 MicroM\abfs\2024_09_03_0000.abf";
-AnalyzeAbfFile(filePath);
+using AbfAuto.Core;
 
-static void AnalyzeAbfFile(string filePath)
-{
-    AbfFileAnalyzer analyzer = new(filePath);
-    string[] saved = analyzer.Analyze();
-    Console.WriteLine(string.Join("\n", saved));
-}
+Analyze.Folder(@"X:\Data\zProjects\OT-Tom dendritic conductivity and Calcium homeostasis\Experiments\alpha MSH\2024-09-03_ 1 MicroM\abfs");

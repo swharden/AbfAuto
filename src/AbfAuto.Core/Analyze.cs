@@ -2,19 +2,54 @@
 
 public static class Analyze
 {
-    public static void AnalyzeAbfFolder(string folderPath, bool overwrite = true)
+    public static void Folder(string folderPath)
     {
-        string[] abfFilePaths = Directory.GetFiles(folderPath, "*.abf");
-        for (int i = 0; i < abfFilePaths.Length; i++)
+        string[] abfFiles = Directory.GetFiles(folderPath, "*.abf");
+        string[] tifFiles = Directory.GetFiles(folderPath, "*.tif");
+        string[] files = [.. abfFiles, .. tifFiles];
+        Array.Sort(files);
+
+        for (int i = 0; i < files.Length; i++)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"Analyzing ABF {i + 1} of {abfFilePaths.Length}");
-            AnalyzeAbfFile(abfFilePaths[i], overwrite);
+            Console.WriteLine($"Analyzing File {i + 1} of {files.Length}: {Path.GetFileName(files[i])}");
+            File(files[i]);
         }
     }
 
-    public static string[] AnalyzeAbfFile(string abfPath, bool overwrite = true)
+    public static void File(string path)
     {
-        return new AbfFileAnalyzer(abfPath).Analyze(overwrite);
+        if (!System.IO.File.Exists(path))
+            throw new FileNotFoundException(path);
+
+        string[] saved;
+
+        if (path.EndsWith(".abf"))
+        {
+            saved = AbfFile(path);
+        }
+        else if (path.EndsWith(".tif"))
+        {
+            saved = TifFile(path);
+        }
+        else
+        {
+            throw new NotFiniteNumberException($"do not know how to auto-analyze: {Path.GetFileName(path)}");
+        }
+
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine(string.Join("\n", saved));
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.WriteLine();
+    }
+
+    public static string[] AbfFile(string abfPath)
+    {
+        return new AbfFileAnalyzer(abfPath).Analyze();
+    }
+
+    public static string[] TifFile(string tifFilePath)
+    {
+        return [Core.TifFile.AutoAnalyze(tifFilePath)];
     }
 }

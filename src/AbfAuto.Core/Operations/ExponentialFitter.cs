@@ -9,14 +9,13 @@ public class ExponentialFitter
 
     public ExponentialFitter(double[] values, double steadyState)
     {
-        // TODO: particle swarm
+        // TODO: use particle swarm optimization
         Offset = steadyState;
         double[] xs = Enumerable.Range(0, values.Length).Select(x => (double)x).ToArray();
         double[] ys = values.Select(x => x - Offset).ToArray();
         double[] logYs = ys.Select(x => Math.Log(x)).ToArray();
         (RateConstant, double intercept) = LeastSquaresFit(xs, logYs);
         Scale = Math.Exp(intercept);
-        Console.WriteLine($"Y={Offset} + {Scale} *  Exp(x / {Tau})");
     }
 
     public double GetY(double x)

@@ -10,7 +10,7 @@ public class Unknown : IAnalyzer
     {
         Sweep sweep = abf.GetAllData();
 
-        Plot plot = CommonPlots.AllSweeps.Consecutive(sweep)
+        Plot plot = CommonPlots.AllSweeps.ConsecutiveMinutes(sweep)
             .WithSignalLineWidth(1.5)
             .WithTightHorizontalMargins();
 

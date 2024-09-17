@@ -36,7 +36,7 @@ public static class MemtestLogic
     {
         try
         {
-            return GetSweepMemtest(abf, sweepIndex);
+            return CalculateMemtest(abf, sweepIndex);
         }
         catch
         {
@@ -44,7 +44,7 @@ public static class MemtestLogic
         }
     }
 
-    public static MemtestResult GetSweepMemtest(AbfSharp.ABF abf, int sweepIndex)
+    private static MemtestResult CalculateMemtest(AbfSharp.ABF abf, int sweepIndex)
     {
         Trace sweepTrace = new(abf, sweepIndex);
 
@@ -91,10 +91,10 @@ public static class MemtestLogic
         postStepTrace.SubtractInPlace(preStepCurrentMean);
 
         // isolate region between a range of the height
-        int maxIndex = GetMaximumIndex(postStepTrace.Values);
+        int maxIndex = postStepTrace.GetMaximumIndex();
         double maxValue = postStepTrace.Values[maxIndex];
-        int index1 = GetFirstIndexBelow(postStepTrace.Values, .8 * maxValue, maxIndex);
-        int index2 = GetFirstIndexBelow(postStepTrace.Values, .2 * maxValue, index1);
+        int index1 = postStepTrace.GetFirstIndexBelow(.8 * maxValue, maxIndex);
+        int index2 = postStepTrace.GetFirstIndexBelow(.2 * maxValue, index1);
         double[] valuesToFit = postStepTrace.Values[index1..index2];
 
         ExponentialFitter fitter = new(valuesToFit, preStepCurrentMean);
@@ -110,31 +110,5 @@ public static class MemtestLogic
         mt.CmStep = (mt.Tau * 1e-3) / (1 / (1 / (mt.Ra * 1e6) + 1 / (mt.Rm * 1e6))) * 1e12;
 
         return mt;
-    }
-
-    public static int GetMaximumIndex(double[] values)
-    {
-        int maxIndex = 0;
-        double maxValue = double.NegativeInfinity;
-        for (int i = 0; i < values.Length; i++)
-        {
-            if (values[i] > maxValue)
-            {
-                maxValue = values[i];
-                maxIndex = i;
-            }
-        }
-        return maxIndex;
-    }
-
-    public static int GetFirstIndexBelow(double[] values, double target, int firstIndex = 0)
-    {
-        for (int i = firstIndex; i < values.Length; i++)
-        {
-            if (values[i] < target)
-                return i;
-        };
-
-        throw new InvalidOperationException("values never went below target");
     }
 }

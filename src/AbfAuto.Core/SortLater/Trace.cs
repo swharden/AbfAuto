@@ -149,4 +149,30 @@ public class Trace
 
         return new Trace(smooth, SamplePeriod);
     }
+
+    public int GetMaximumIndex()
+    {
+        int maxIndex = 0;
+        double maxValue = double.NegativeInfinity;
+        for (int i = 0; i < Values.Length; i++)
+        {
+            if (Values[i] > maxValue)
+            {
+                maxValue = Values[i];
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
+    public int GetFirstIndexBelow(double target, int firstIndex = 0)
+    {
+        for (int i = firstIndex; i < Values.Length; i++)
+        {
+            if (Values[i] < target)
+                return i;
+        };
+
+        throw new InvalidOperationException("values never went below target");
+    }
 }

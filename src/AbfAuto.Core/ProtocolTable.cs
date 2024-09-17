@@ -16,6 +16,9 @@ public static class ProtocolTable
         { "0301", typeof(Analyzers.P0301_APFreqOverTime) },
 
         { "0405", typeof(Analyzers.P0405_RepeatedMemtest) },
+        { "0406", typeof(Analyzers.P0405_RepeatedMemtest) },
+
+        { "0804", typeof(Analyzers.P0804_bAP) },
 
         { "EEG-3", typeof(Analyzers.PEEG_3Ch) },
     };

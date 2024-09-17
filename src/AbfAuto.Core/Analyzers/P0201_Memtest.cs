@@ -23,12 +23,7 @@ public class P0201_Memtest : IAnalyzer
             sig.LineWidth = 1.5f;
         }
 
-        var an = plot.Add.Annotation(
-            $"Holding current: {mt.Ih:N2} pA\n" +
-            $"Membrane Resistance: {mt.Rm:N2} MΩ\n" +
-            $"Access Resistance: {mt.Ra:N2} MΩ\n" +
-            $"Capacitance (Step): {mt.CmStep:N2} pA"
-            , Alignment.UpperRight);
+        var an = plot.Add.Annotation(mt.GetMessage(), Alignment.UpperRight);
         an.LabelShadowColor = Colors.Transparent;
         an.LabelBackgroundColor = Colors.Gray.WithAlpha(.2);
         an.LabelFontSize = 16;

@@ -5,7 +5,7 @@ namespace AbfAuto.Core.CommonPlots;
 
 public static class AllSweeps
 {
-    public static ScottPlot.Plot Overlapping(AbfSharp.ABF abf, double yOffset = 0, int smoothPoints = 0)
+    public static Plot Overlapping(AbfSharp.ABF abf, double yOffset = 0, int smoothPoints = 0)
     {
         Plot plot = new();
         plot.HideGrid();
@@ -27,32 +27,38 @@ public static class AllSweeps
         return plot;
     }
 
-    public static ScottPlot.Plot Consecutive(AbfSharp.ABF abf, int channelIndex = 0)
+    public static Plot Consecutive(AbfSharp.ABF abf, int channelIndex = 0)
     {
-        bool isLongAbf = abf.AbfLength() > 10 * 60;
-        Sweep sweep = isLongAbf
-            ? abf.GetAllDataNth(channelIndex) 
-            : abf.GetAllData(channelIndex);
-        return Consecutive(sweep);
+        return abf.AbfLength() > 10 * 60
+            ? ConsecutiveMinutes(abf, channelIndex)
+            : ConsecutiveSeconds(abf, channelIndex);
     }
 
-    public static ScottPlot.Plot Consecutive(Sweep sweep)
+    public static Plot ConsecutiveSeconds(AbfSharp.ABF abf, int channelIndex = 0)
+    {
+        return ConsecutiveSeconds(abf.GetAllData(channelIndex));
+    }
+
+    public static Plot ConsecutiveSeconds(Sweep sweep)
     {
         Plot plot = new();
-
-        if (sweep.Duration > 10 * 60)
-        {
-            plot.Add.Signal(sweep.Values, sweep.SamplePeriod / 60);
-            plot.XLabel("Time (minutes)");
-        }
-        else
-        {
-            plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
-            plot.XLabel("Time (seconds)");
-        }
-
+        plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
+        plot.XLabel("Time (seconds)");
         plot.WithTightHorizontalMargins();
+        return plot;
+    }
 
+    public static Plot ConsecutiveMinutes(AbfSharp.ABF abf, int channelIndex = 0)
+    {
+        return ConsecutiveMinutes(abf.GetAllDataNth(channelIndex));
+    }
+
+    public static Plot ConsecutiveMinutes(Sweep sweep)
+    {
+        Plot plot = new();
+        plot.Add.Signal(sweep.Values, sweep.SamplePeriod / 60);
+        plot.XLabel("Time (minutes)");
+        plot.WithTightHorizontalMargins();
         return plot;
     }
 }

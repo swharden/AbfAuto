@@ -10,7 +10,7 @@ internal class PEEG_3Ch : IAnalyzer
     public AnalysisResult Analyze(ABF abf)
     {
         Sweep sweep1 = abf.GetAllData(0).Smooth(100).Detrend(1000);
-        Plot ch1Full = CommonPlots.AllSweeps.Consecutive(sweep1)
+        Plot ch1Full = CommonPlots.AllSweeps.ConsecutiveMinutes(sweep1)
             .WithYLabel("EEG")
             .WithSignalLineWidth(1.5)
             .WithVerticalLinesAtTagTimes(abf)
@@ -19,7 +19,7 @@ internal class PEEG_3Ch : IAnalyzer
         Plot ch1freq = GetEegFreqPlot(sweep1).WithVerticalLinesAtTagTimes(abf);
 
         Sweep sweep2 = abf.GetAllData(1).Smooth(100).Detrend(1000);
-        Plot ch2Full = CommonPlots.AllSweeps.Consecutive(sweep2)
+        Plot ch2Full = CommonPlots.AllSweeps.ConsecutiveMinutes(sweep2)
             .WithYLabel("Respiration")
             .WithSignalLineWidth(1.5)
             .WithVerticalLinesAtTagTimes(abf)
@@ -27,7 +27,7 @@ internal class PEEG_3Ch : IAnalyzer
         Plot ch2freq = GetRespirationFreqPlot(sweep2).WithVerticalLinesAtTagTimes(abf);
 
         Sweep sweep3 = abf.GetAllData(2).Derivative().Derivative().Rectified().Smooth(10);
-        Plot ch3Full = CommonPlots.AllSweeps.Consecutive(sweep3)
+        Plot ch3Full = CommonPlots.AllSweeps.ConsecutiveMinutes(sweep3)
             .WithSignalLineWidth(1.5)
             .WithVerticalLinesAtTagTimes(abf)
             .WithYLabel("ECG")
