@@ -1,5 +1,6 @@
 ﻿using AbfAuto.Core.EventDetection;
-using AbfAuto.Core.Extensions;
+using AbfSharp;
+
 using ScottPlot;
 
 namespace AbfAuto.Core.Analyzers;
@@ -8,7 +9,7 @@ public class P0111_AP : IAnalyzer
 {
     public AnalysisResult Analyze(AbfSharp.ABF abf)
     {
-        Sweep sweep = abf.GetAllData();
+        Sweep sweep = abf.GetAllData(0);
 
         DerivativeThreshold.Settings settings = new();
         int[] indexes = DerivativeThreshold.GetIndexes(sweep, settings);

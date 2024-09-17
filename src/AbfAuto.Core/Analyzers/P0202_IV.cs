@@ -68,7 +68,7 @@ public class P0202_IV : IAnalyzer
         double[] voltages = Generate.Consecutive(abf.SweepCount, 10, -110);
         double[] currents = Enumerable
             .Range(0, abf.SweepCount)
-            .Select(x => abf.GetSweep2(x).Values[i1..i2].Average())
+            .Select(x => abf.GetSweep(x).Values[i1..i2].Average())
             .ToArray();
         return (voltages, currents);
     }

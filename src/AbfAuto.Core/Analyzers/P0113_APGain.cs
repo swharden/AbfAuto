@@ -1,6 +1,6 @@
 ﻿using AbfAuto.Core.EventDetection;
+using AbfSharp;
 using ScottPlot;
-using System.Security;
 
 namespace AbfAuto.Core.Analyzers;
 
@@ -8,8 +8,8 @@ public class P0113_APGain : IAnalyzer
 {
     public AnalysisResult Analyze(AbfSharp.ABF abf)
     {
-        Epoch epochStep1 = abf.GetEpoch(1);
-        Epoch epochStep2 = abf.GetEpoch(4);
+        Epoch epochStep1 = abf.Epochs[1];
+        Epoch epochStep2 = abf.Epochs[4];
 
         double[] xs = epochStep1.GetLevelsBySweep();
         double[] ys1 = APDetection.FreqPerSweep(abf, epochStep1);

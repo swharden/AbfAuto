@@ -10,7 +10,7 @@ public class Locate
         foreach (string abfPath in abfPaths)
         {
             AbfSharp.ABF abf = new(abfPath, preloadSweepData: false);
-            if (abf.Protocol().Contains(match))
+            if (abf.Header.Protocol.Contains(match))
             {
                 matchingPaths.Add(abfPath);
             }

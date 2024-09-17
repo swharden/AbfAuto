@@ -1,4 +1,5 @@
 ﻿namespace AbfAuto.Core.EventDetection;
+using AbfSharp;
 
 public static class DerivativeThreshold
 {

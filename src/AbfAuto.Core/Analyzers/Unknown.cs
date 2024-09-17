@@ -1,5 +1,4 @@
-﻿using AbfAuto.Core.Extensions;
-using AbfSharp;
+﻿using AbfSharp;
 using ScottPlot;
 
 namespace AbfAuto.Core.Analyzers;
@@ -8,7 +7,7 @@ public class Unknown : IAnalyzer
 {
     public AnalysisResult Analyze(ABF abf)
     {
-        Sweep sweep = abf.GetAllData();
+        Sweep sweep = abf.GetAllData(0);
 
         Plot plot = CommonPlots.AllSweeps.ConsecutiveMinutes(sweep)
             .WithSignalLineWidth(1.5)
@@ -20,7 +19,7 @@ public class Unknown : IAnalyzer
         an.LabelFontName = ScottPlot.Fonts.Monospace;
         an.LabelBold = true;
 
-        plot.Title($"{Path.GetFileName(abf.FilePath)}\n{abf.Protocol()}");
+        plot.Title($"{Path.GetFileName(abf.FilePath)}\n{abf.Header.Protocol}");
         plot.DataBackground.Color = Colors.Red.WithAlpha(.1);
 
         return AnalysisResult.Single(plot);

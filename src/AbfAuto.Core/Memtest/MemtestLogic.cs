@@ -1,4 +1,4 @@
-﻿using AbfAuto.Core.Operations;
+﻿using AbfSharp;
 
 namespace AbfAuto.Core.Memtest;
 
@@ -46,21 +46,20 @@ public static class MemtestLogic
 
     private static MemtestResult CalculateMemtest(AbfSharp.ABF abf, int sweepIndex, int channelIndex = 0)
     {
-        Sweep sweep = abf.GetSweep2(sweepIndex, channelIndex);
+        Sweep sweep = abf.GetSweep(sweepIndex, channelIndex);
 
         // add values to the membrane test as they are calculated
         MemtestResult mt = new();
 
         // identify the membrane test epoch (the first hyperpolarization pulse)
-        Epoch[] epochs = abf.GetEpochs();
-        int downwardEpochIndex = GetHyperpolarizingStepIndex(epochs);
+        int downwardEpochIndex = GetHyperpolarizingStepIndex(abf);
 
         // isolate the segments before, during, and after the hyperpolarization pulse
         Sweep preStep = (downwardEpochIndex == 0)
-            ? sweep.SubTraceByIndex(0, epochs[0].IndexFirst)
-            : sweep.SubTraceByEpoch(epochs[downwardEpochIndex - 1]);
-        Sweep step = sweep.SubTraceByEpoch(epochs[downwardEpochIndex]);
-        int postIndex1 = epochs[downwardEpochIndex].IndexLast;
+            ? sweep.SubTraceByIndex(0, abf.Epochs[0].IndexFirst)
+            : sweep.SubTraceByEpoch(abf.Epochs[downwardEpochIndex - 1]);
+        Sweep step = sweep.SubTraceByEpoch(abf.Epochs[downwardEpochIndex]);
+        int postIndex1 = abf.Epochs[downwardEpochIndex].IndexLast;
         int postIndex2 = postIndex1 + step.Values.Length;
         Sweep postStep = sweep.SubTraceByIndex(postIndex1, postIndex2);
 
@@ -73,8 +72,8 @@ public static class MemtestLogic
         // determine the dV
         double preStepVoltage = (downwardEpochIndex == 0)
             ? abf.Header.AbfFileHeader.fDACHoldingLevel[0]
-            : epochs[downwardEpochIndex - 1].Level;
-        double stepVoltage = epochs[downwardEpochIndex].Level;
+            : abf.Epochs[downwardEpochIndex - 1].Level;
+        double stepVoltage = abf.Epochs[downwardEpochIndex].Level;
         mt.dV = Math.Abs(preStepVoltage - stepVoltage);
 
         // The capacitive transient after the hyperpolarization step will be further analyzed.
@@ -102,20 +101,20 @@ public static class MemtestLogic
         mt.Ra = mt.dV / extrapolatedPeakDeltaI * 1000;
         mt.Rm = ((mt.dV * 1e-3) - (mt.Ra * 1e6) * (mt.dI * 1e-12)) / (mt.dI * 1e-12) / 1e6;
         mt.CmStep = (mt.Tau * 1e-3) / (1 / (1 / (mt.Ra * 1e6) + 1 / (mt.Rm * 1e6))) * 1e12;
-        mt.CmRamp = GetCmRamp(sweep, epochs);
+        mt.CmRamp = GetCmRamp(sweep, abf);
 
         return mt;
     }
 
-    private static double GetCmRamp(Sweep sweep, Epoch[] epochs)
+    private static double GetCmRamp(Sweep sweep, ABF abf)
     {
-        int rampIndex = GetHyperpolarizingRampIndex(epochs);
+        int rampIndex = GetHyperpolarizingRampIndex(abf);
         if (rampIndex == 0)
             return 0;
 
         // isolate the two ramps
-        Epoch falling = epochs[rampIndex];
-        Epoch rising = epochs[rampIndex + 1];
+        Epoch falling = abf.Epochs[rampIndex];
+        Epoch rising = abf.Epochs[rampIndex + 1];
 
         // measure the rate of the voltage change
         double dV = rising.Level - falling.Level;
@@ -143,12 +142,12 @@ public static class MemtestLogic
         return cmRamp;
     }
 
-    private static int GetHyperpolarizingStepIndex(Epoch[] epochs)
+    private static int GetHyperpolarizingStepIndex(ABF abf)
     {
-        for (int i = 1; i < epochs.Length; i++)
+        for (int i = 1; i < abf.Epochs.Length; i++)
         {
-            bool isStep = epochs[i].EpochType == AbfSharp.EpochType.Step;
-            bool isHyperpolarizing = epochs[i].Level < epochs[i - 1].Level;
+            bool isStep = abf.Epochs[i].EpochType == AbfSharp.EpochType.Step;
+            bool isHyperpolarizing = abf.Epochs[i].Level < abf.Epochs[i - 1].Level;
             if (isStep && isHyperpolarizing)
             {
                 return i;
@@ -158,12 +157,12 @@ public static class MemtestLogic
         return 0;
     }
 
-    private static int GetHyperpolarizingRampIndex(Epoch[] epochs)
+    private static int GetHyperpolarizingRampIndex(ABF abf)
     {
-        for (int i = 1; i < epochs.Length; i++)
+        for (int i = 1; i < abf.Epochs.Length; i++)
         {
-            bool isRamp = epochs[i].EpochType == AbfSharp.EpochType.Ramp;
-            bool isHyperpolarizing = epochs[i].Level < epochs[i - 1].Level;
+            bool isRamp = abf.Epochs[i].EpochType == AbfSharp.EpochType.Ramp;
+            bool isHyperpolarizing = abf.Epochs[i].Level < abf.Epochs[i - 1].Level;
             if (isRamp && isHyperpolarizing)
             {
                 return i;

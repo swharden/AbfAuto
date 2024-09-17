@@ -1,4 +1,4 @@
-﻿namespace AbfAuto.Core.Operations;
+﻿namespace AbfAuto.Core.Memtest;
 
 public class ExponentialFitter
 {
@@ -9,7 +9,6 @@ public class ExponentialFitter
 
     public ExponentialFitter(double[] values, double steadyState)
     {
-        // TODO: use particle swarm optimization
         Offset = steadyState;
         double[] xs = Enumerable.Range(0, values.Length).Select(x => (double)x).ToArray();
         double[] ys = values.Select(x => x - Offset).ToArray();

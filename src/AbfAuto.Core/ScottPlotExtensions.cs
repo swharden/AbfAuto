@@ -1,9 +1,18 @@
-﻿using ScottPlot;
+﻿using AbfSharp;
+using ScottPlot;
 
 namespace AbfAuto.Core;
 
 public static class ScottPlotExtensions
 {
+    public static ScottPlot.Plottables.Signal AddSignalMS(this ScottPlot.Plot plot, Sweep sweep)
+    {
+        var sig = plot.Add.Signal(sweep.Values, sweep.SamplePeriod * 1000);
+        plot.XLabel("Time (msec)");
+        plot.Axes.Margins(horizontal: 0);
+        return sig;
+    }
+
     public static Plot WithSignalColor(this Plot plot, ScottPlot.Color color)
     {
         foreach (var sig in plot.GetPlottables<ScottPlot.Plottables.Signal>())

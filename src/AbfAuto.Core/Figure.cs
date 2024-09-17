@@ -15,7 +15,7 @@ public class Figure
             Directory.CreateDirectory(analysisFolder);
         }
 
-        string saveAs = Path.Combine(analysisFolder, $"{abf.AbfID()}_AbfSharp_{name}.png");
+        string saveAs = Path.Combine(analysisFolder, $"{abf.AbfID}_AbfSharp_{name}.png");
         return plot.SavePng(saveAs, width, height);
     }
 }

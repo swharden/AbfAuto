@@ -8,10 +8,9 @@ internal class P0405_RepeatedMemtest : IAnalyzer
     public AnalysisResult Analyze(AbfSharp.ABF abf)
     {
         MemtestResult?[] mts = MemtestLogic.GetMemtestBySweep(abf);
-        double[] sweepTimes = abf.SweepStartTimes();
         int[] validIndexes = Enumerable.Range(0, mts.Length).Where(x => mts[x] is not null).ToArray();
 
-        double[] sweepTimes2 = validIndexes.Select(x => sweepTimes[x] / 60).ToArray();
+        double[] sweepTimes2 = validIndexes.Select(x => abf.SweepStartTimes[x] / 60).ToArray();
         MemtestResult[] mts2 = validIndexes.Select(x => (MemtestResult)mts[x]!).ToArray();
 
         Plot plotIh = new();

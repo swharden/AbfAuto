@@ -1,5 +1,6 @@
 ﻿using AbfAuto.Core.Memtest;
 using ScottPlot;
+using AbfSharp;
 
 namespace AbfAuto.Core.Analyzers;
 

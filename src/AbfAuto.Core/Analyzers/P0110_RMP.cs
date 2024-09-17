@@ -1,5 +1,4 @@
-﻿using AbfAuto.Core.Extensions;
-using AbfSharp;
+﻿using AbfSharp;
 using ScottPlot;
 
 namespace AbfAuto.Core.Analyzers;
@@ -8,7 +7,7 @@ internal class P0110_RMP : IAnalyzer
 {
     public AnalysisResult Analyze(ABF abf)
     {
-        Sweep sweep = abf.GetAllData().Smooth(TimeSpan.FromMilliseconds(2));
+        Sweep sweep = abf.GetAllData(0).Smooth(TimeSpan.FromMilliseconds(2));
         double mean = sweep.Values.Average();
 
         Plot plot = new();

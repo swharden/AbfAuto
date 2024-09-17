@@ -1,4 +1,5 @@
 ﻿namespace AbfAuto.Core.EventDetection;
+using AbfSharp;
 
 public static class APDetection
 {
@@ -9,7 +10,7 @@ public static class APDetection
         int[][] apIndexes = new int[abf.SweepCount][];
         for (int i = 0; i < abf.SweepCount; i++)
         {
-            Sweep sweep = abf.GetSweep2(i);
+            Sweep sweep = abf.GetSweep(i);
             apIndexes[i] = DerivativeThreshold.GetIndexes(sweep, settings);
         }
 
@@ -38,6 +39,6 @@ public static class APDetection
 
     public static double[] FreqPerSweep(AbfSharp.ABF abf)
     {
-        return IndexesPerSweep(abf).Select(x => x.Length / abf.SweepLength()).ToArray();
+        return IndexesPerSweep(abf).Select(x => x.Length / abf.SweepLength).ToArray();
     }
 }
