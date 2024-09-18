@@ -1,4 +1,10 @@
-﻿using AbfAuto.Watcher;
+﻿/* This console application runs continuously on the server.
+ * It polls a file that has a list of watched folders
+ * and ensures all ABF and TIF files that appear in those folders get analyzed.
+ * When new files are seen, it calls AbfAuto.exe to analyze them.
+ */
+
+using AbfFolderWatcher;
 
 while (true)
 {

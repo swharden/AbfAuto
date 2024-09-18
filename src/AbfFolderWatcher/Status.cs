@@ -1,4 +1,4 @@
-﻿namespace AbfAuto.Watcher;
+﻿namespace AbfFolderWatcher;
 internal static class Status
 {
     public static void Warning(string message)
