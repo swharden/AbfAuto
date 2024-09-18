@@ -2,16 +2,27 @@
 
 public class TemporaryConsoleColor : IDisposable
 {
-    private readonly ConsoleColor OriginalColor;
+    private readonly ConsoleColor OriginalForegroundColor;
+    private readonly ConsoleColor OriginalBackgroundColor;
 
-    public TemporaryConsoleColor(ConsoleColor color)
+    public TemporaryConsoleColor(ConsoleColor foreground)
     {
-        OriginalColor = Console.ForegroundColor;
-        Console.ForegroundColor = color;
+        OriginalForegroundColor = Console.ForegroundColor;
+        OriginalBackgroundColor = Console.BackgroundColor;
+        Console.ForegroundColor = foreground;
+    }
+
+    public TemporaryConsoleColor(ConsoleColor foreground, ConsoleColor background)
+    {
+        OriginalForegroundColor = Console.ForegroundColor;
+        OriginalBackgroundColor = Console.BackgroundColor;
+        Console.ForegroundColor = foreground;
+        Console.BackgroundColor = background;
     }
 
     public void Dispose()
     {
-        Console.ForegroundColor = OriginalColor;
+        Console.ForegroundColor = OriginalForegroundColor;
+        Console.BackgroundColor = OriginalBackgroundColor;
     }
 }

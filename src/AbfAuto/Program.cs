@@ -11,8 +11,8 @@ public static class Program
     {
         if (System.Diagnostics.Debugger.IsAttached)
         {
-            // manually set 
-            args = [@"X:\Data\Alchem\Donepezil\BLA\07-28-2021\2021_07_28_DIC1_0000.tif"];
+            string testFilePath = @"X:\Data\zProjects\Oxytocin Biosensor\experiments\ChR2 stimulation\2024-08-15 ephys\2024_08_15_0002.abf";
+            args = [testFilePath];
         }
 
         if (args.Length != 1)

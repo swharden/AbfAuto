@@ -18,6 +18,8 @@ public static class ProtocolTable
         { "0405", typeof(Analyzers.P0405_RepeatedMemtest) },
         { "0406", typeof(Analyzers.P0405_RepeatedMemtest) },
 
+        { "0501", typeof(Analyzers.P0501_OptoSinglePulse) },
+
         { "0804", typeof(Analyzers.P0804_bAP) },
 
         { "EEG-3", typeof(Analyzers.PEEG_3Ch) },
@@ -40,10 +42,10 @@ public static class ProtocolTable
             }
         };
 
-        using (TemporaryConsoleColor c = new(ConsoleColor.Magenta))
+        using (TemporaryConsoleColor c = new(ConsoleColor.White, ConsoleColor.Magenta))
         {
-            Console.WriteLine($"WARNING: Protocol '{protocol}' is unknown.");
-            Console.WriteLine($"Edit {nameof(ProtocolTable)}.cs to assign it to an existing analysis.");
+            Console.WriteLine($"WARNING: Protocol '{protocol}' has no matching analyzer.");
+            Console.WriteLine($"Edit {nameof(ProtocolTable)}.cs to assign this protocol to an analyzer.");
         }
 
         object? unknownProtocolInstance = Activator.CreateInstance(typeof(Analyzers.Unknown));
