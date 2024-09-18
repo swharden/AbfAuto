@@ -1,19 +1,16 @@
-﻿using AbfSharp;
-using ScottPlot;
+﻿using ScottPlot;
 
-namespace AbfAuto.Analyzers;
-
-internal class P0501_OptoSinglePulse : IAnalyzer
+namespace AbfAuto.CommonPlots;
+internal static class Opto
 {
-    public AnalysisResult Analyze(ABF abf)
+    public static MultiPlot2 RepeatedSweeps(AbfSharp.ABF abf, int pulseEpochIndex)
     {
         // determine where the opto pulse is
-        int pulseEpochIndex = 2;
         double pulseStart = abf.Epochs[pulseEpochIndex].StartTime;
         double pulseEnd = abf.Epochs[pulseEpochIndex].EndTime;
         double viewPad = 0.2;
         double viewStart = pulseStart - viewPad;
-        double viewEnd = pulseStart + viewPad;
+        double viewEnd = pulseEnd + viewPad;
         int i1 = (int)(viewStart * abf.SampleRate);
         int i2 = (int)(viewEnd * abf.SampleRate);
 
@@ -84,6 +81,6 @@ internal class P0501_OptoSinglePulse : IAnalyzer
         mp.AddSubplot(plot1, 0, 2, 0, 1);
         mp.AddSubplot(plot2, 1, 2, 0, 1);
 
-        return AnalysisResult.Single(mp);
+        return mp;
     }
 }

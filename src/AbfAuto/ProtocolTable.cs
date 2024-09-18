@@ -18,7 +18,9 @@ public static class ProtocolTable
         { "0405", typeof(Analyzers.P0405_RepeatedMemtest) },
         { "0406", typeof(Analyzers.P0405_RepeatedMemtest) },
 
-        { "0501", typeof(Analyzers.P0501_OptoSinglePulse) },
+        { "0501", typeof(Analyzers.P0501_OptoEpoch2) },
+        { "0503", typeof(Analyzers.P0503_OptoEpoch1) },
+        { "0509", typeof(Analyzers.P0503_OptoEpoch1) },
 
         { "0804", typeof(Analyzers.P0804_bAP) },
 

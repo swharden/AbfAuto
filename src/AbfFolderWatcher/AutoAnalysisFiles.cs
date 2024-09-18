@@ -68,6 +68,7 @@ internal static class AutoAnalysisFiles
 
             bool hasAnalysisImages = pngFilenames
                 .Where(x => x.StartsWith(abfID, StringComparison.InvariantCultureIgnoreCase))
+                .Where(x => !x.Contains(".tif.png")) // converted TIFs don't count
                 .Any();
 
             if (!hasAnalysisImages)

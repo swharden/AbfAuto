@@ -22,16 +22,23 @@ internal static class Status
         Console.WriteLine($"[{DateTime.Now}] {message}");
     }
 
-    public static void Watching(int folderCount)
+    public static void Watching()
     {
+        Console.CursorVisible = false;
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.CursorLeft = 0;
+        Console.Write("Watching for new ABFs");
+
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        //string[] spinner = { "..   ", "...  ", ".... ", ".....", " ....", "  ...", "   ..", ".   ." };
+        string[] spinner = { "—", "\\", "|", "/" };
+        string symbol = spinner[DateTime.Now.Second % spinner.Length];
+        Console.Write($" {symbol} ");
+
+        Console.ForegroundColor = ConsoleColor.Gray;
         long memoryUsed = GC.GetTotalMemory(false);
         double memoryUsedInMB = memoryUsed / (1024.0 * 1024.0);
-        string s = folderCount == 1 ? "" : "s";
-        string message = $"Watching {folderCount} folder{s} ({memoryUsedInMB:N2} MB used)";
-        message = message.Trim().PadRight(50);
-        Console.CursorVisible = false;
-        Console.ForegroundColor = ConsoleColor.Gray;
-        Console.CursorLeft = 0;
-        Console.Write($"[{DateTime.Now}] {message}");
+        Console.Write($"{memoryUsedInMB:N3} MB in use");
+        Console.Write("     ");
     }
 }

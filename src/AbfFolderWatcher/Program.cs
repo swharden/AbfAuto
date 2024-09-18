@@ -5,11 +5,15 @@
  */
 
 using AbfFolderWatcher;
+using System.Diagnostics;
 
 while (true)
 {
-    string[] watchedFolders = AutoAnalysisFolders.GetWatchedFolders();
-    Status.Watching(watchedFolders.Length);
+    string[] watchedFolders = Debugger.IsAttached
+        ? [@"X:\Data\zProjects\Oxytocin Biosensor\experiments\ChR2 stimulation\2024-09-18 ephys"] // set this for local testing
+        : AutoAnalysisFolders.GetWatchedFolders();
+
+    Status.Watching();
 
     string[] filesNeedingAnalysis = AutoAnalysisFiles.GetFilesNeedingAnalysis(watchedFolders);
     foreach (string filePath in filesNeedingAnalysis)
