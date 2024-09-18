@@ -17,9 +17,13 @@ internal static class Status
 
     public static void Error(string message)
     {
+        Console.WriteLine();
         Console.CursorVisible = false;
-        Console.ForegroundColor = ConsoleColor.Magenta;
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.BackgroundColor = ConsoleColor.Magenta;
         Console.WriteLine($"[{DateTime.Now}] {message}");
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.BackgroundColor = ConsoleColor.Black;
     }
 
     public static void Watching()

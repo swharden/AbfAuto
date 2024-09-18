@@ -11,6 +11,11 @@ internal static class AutoAnalysisFiles
 
         foreach (string watchedFolder in watchedFolders)
         {
+            if (!Directory.Exists(watchedFolder))
+            {
+                Status.Error($"Watched folder path does not exist:\n{watchedFolder}");
+                continue;
+            }
             string[] files = GetFilesNeedingAnalysis(watchedFolder);
             filesNeedingAnalysis.AddRange(files);
         }
