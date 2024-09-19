@@ -2,7 +2,10 @@
 
 namespace AbfAuto.Analyzers;
 
-public class P0202_IV : IAnalyzer
+/// <summary>
+/// Analyze a voltage-clamp IP protocol and also show the tail current
+/// </summary>
+public class IVWithTail : IAnalyzer
 {
     public record struct TimeRange(double Time1, double Time2);
 

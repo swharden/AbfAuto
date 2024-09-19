@@ -4,7 +4,10 @@ using AbfSharp;
 
 namespace AbfAuto.Analyzers;
 
-public class P0201_Memtest : IAnalyzer
+/// <summary>
+/// Get membrane test for a cell using fast repeated voltage-clamp sweeps with a hyperpolarization step
+/// </summary>
+public class Memtest : IAnalyzer
 {
     public AnalysisResult Analyze(AbfSharp.ABF abf)
     {

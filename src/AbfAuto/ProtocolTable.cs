@@ -4,27 +4,27 @@ public static class ProtocolTable
 {
     private readonly static Dictionary<string, Type> AnalysesByProtocol = new()
     {
-        { "0110", typeof(Analyzers.P0110_RMP) },
-        { "0111", typeof(Analyzers.P0111_AP) },
-        { "0112", typeof(Analyzers.P0113_APGain) },
-        { "0113", typeof(Analyzers.P0113_APGain) },
-        { "0114", typeof(Analyzers.P0113_APGain) },
+        { "0110", typeof(Analyzers.RMP) },
+        { "0111", typeof(Analyzers.APFirst) },
+        { "0112", typeof(Analyzers.APGainDual) },
+        { "0113", typeof(Analyzers.APGainDual) },
+        { "0114", typeof(Analyzers.APGainDual) },
 
-        { "0201", typeof(Analyzers.P0201_Memtest) },
-        { "0202", typeof(Analyzers.P0202_IV) },
+        { "0201", typeof(Analyzers.Memtest) },
+        { "0202", typeof(Analyzers.IVWithTail) },
 
-        { "0301", typeof(Analyzers.P0301_APFreqOverTime) },
+        { "0301", typeof(Analyzers.APFreqOverTime) },
 
-        { "0405", typeof(Analyzers.P0405_RepeatedMemtest) },
-        { "0406", typeof(Analyzers.P0405_RepeatedMemtest) },
+        { "0405", typeof(Analyzers.MemtestRepeated) },
+        { "0406", typeof(Analyzers.MemtestRepeated) },
 
-        { "0501", typeof(Analyzers.P0501_OptoEpoch2) },
-        { "0503", typeof(Analyzers.P0503_OptoEpoch1) },
-        { "0509", typeof(Analyzers.P0503_OptoEpoch1) },
+        { "0501", typeof(Analyzers.OptoMeanEpoch2) },
+        { "0503", typeof(Analyzers.OptoMeanEpoch1) },
+        { "0509", typeof(Analyzers.OptoMeanEpoch1) },
 
-        { "0804", typeof(Analyzers.P0804_bAP) },
+        { "0804", typeof(Analyzers.BAP) },
 
-        { "EEG-3", typeof(Analyzers.PEEG_3Ch) },
+        { "EEG-3", typeof(Analyzers.InVivo3) },
     };
 
     public static IAnalyzer GetAnalysis(AbfSharp.ABF abf)

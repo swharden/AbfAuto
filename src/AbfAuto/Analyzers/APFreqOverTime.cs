@@ -3,7 +3,11 @@ using AbfSharp;
 using ScottPlot;
 
 namespace AbfAuto.Analyzers;
-internal class P0301_APFreqOverTime : IAnalyzer
+
+/// <summary>
+/// AP Frequency per sweep over time
+/// </summary>
+internal class APFreqOverTime : IAnalyzer
 {
     public AnalysisResult Analyze(ABF abf)
     {

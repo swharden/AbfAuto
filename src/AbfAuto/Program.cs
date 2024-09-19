@@ -11,7 +11,7 @@ public static class Program
     {
         if (System.Diagnostics.Debugger.IsAttached)
         {
-            string testPath = @"X:\Data\zProjects\Oxytocin Biosensor\experiments\ChR2 stimulation\2024-09-18 ephys";
+            string testPath = @"X:\Data\zProjects\Oxytocin Biosensor\experiments\ChR2 stimulation\2024-09-18 ephys\2024_09_18_0000.abf";
             args = [testPath];
         }
 

@@ -3,7 +3,10 @@ using ScottPlot;
 
 namespace AbfAuto.Analyzers;
 
-internal class P0405_RepeatedMemtest : IAnalyzer
+/// <summary>
+/// Show memtest properties over time
+/// </summary>
+internal class MemtestRepeated : IAnalyzer
 {
     public AnalysisResult Analyze(AbfSharp.ABF abf)
     {

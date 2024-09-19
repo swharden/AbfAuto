@@ -4,7 +4,10 @@ using ScottPlot;
 
 namespace AbfAuto.Analyzers;
 
-public class P0113_APGain : IAnalyzer
+/// <summary>
+/// Analyze gain curves from two IC steps (one from rest, one from hyperpolarized)
+/// </summary>
+public class APGainDual : IAnalyzer
 {
     public AnalysisResult Analyze(AbfSharp.ABF abf)
     {

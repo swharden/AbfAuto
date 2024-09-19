@@ -18,8 +18,6 @@ public class AbfFileAnalyzer
 
     public string[] Analyze(bool overwrite = true)
     {
-        CreateAnalysisFolder();
-
         Stopwatch sw = Stopwatch.StartNew();
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -29,17 +27,11 @@ public class AbfFileAnalyzer
         string protocol = Path.GetFileNameWithoutExtension(abf.Header.AbfFileHeader.sProtocolPath);
 
         IAnalyzer analysis = ProtocolTable.GetAnalysis(abf);
-        if (analysis is null)
-        {
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine($"ERROR: Unsupported protocol {protocol}");
-            return [];
-        }
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine($"Protocol: {protocol}");
         Console.WriteLine($"Analysis: {analysis}");
-        AnalysisResult result = analysis.Analyze(abf);
+        AnalysisResult result = ExecuteAnalysis(abf, analysis);
 
         string saveAsName = analysis.ToString()!.Split(".").Last();
         string saveAsBase = Path.Combine(AnalysisFolderPath, $"{AbfID}_AbfAuto_{saveAsName}");
@@ -50,9 +42,17 @@ public class AbfFileAnalyzer
         return filenames;
     }
 
-    private void CreateAnalysisFolder()
+    private AnalysisResult ExecuteAnalysis(AbfSharp.ABF abf, IAnalyzer analysis)
     {
-        if (!Directory.Exists(AnalysisFolderPath))
-            Directory.CreateDirectory(AnalysisFolderPath);
+        try
+        {
+            if (!Directory.Exists(AnalysisFolderPath))
+                Directory.CreateDirectory(AnalysisFolderPath);
+            return analysis.Analyze(abf);
+        }
+        catch (Exception ex)
+        {
+            return new Analyzers.Crashed(ex).Analyze(abf);
+        }
     }
 }

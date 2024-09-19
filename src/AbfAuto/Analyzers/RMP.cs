@@ -3,7 +3,7 @@ using ScottPlot;
 
 namespace AbfAuto.Analyzers;
 
-internal class P0110_RMP : IAnalyzer
+internal class RMP : IAnalyzer
 {
     public AnalysisResult Analyze(ABF abf)
     {

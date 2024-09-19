@@ -4,7 +4,10 @@ using ScottPlot;
 
 namespace AbfAuto.Analyzers;
 
-public class P0804_bAP : IAnalyzer
+/// <summary>
+/// Voltage-clamp protocol that simulates a back propagating action potential with fast depolarizing voltage clamp pulses.
+/// </summary>
+public class BAP : IAnalyzer
 {
     public AnalysisResult Analyze(ABF abf)
     {

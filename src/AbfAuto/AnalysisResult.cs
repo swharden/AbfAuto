@@ -4,7 +4,9 @@ namespace AbfAuto;
 
 public class AnalysisResult
 {
-    public List<SizedPlot> Plots { get; } = [];
+    List<SizedPlot> Plots { get; } = [];
+    List<AnalysisTextFile> TextFiles { get; } = [];
+    readonly record struct AnalysisTextFile(string Name, string Contents);
 
     public static AnalysisResult Single(Plot plot, int width = 800, int height = 600)
     {
@@ -22,6 +24,13 @@ public class AnalysisResult
         return result;
     }
 
+    public AnalysisResult WithTextFile(string name, string contents)
+    {
+        AnalysisTextFile file = new(name, contents);
+        TextFiles.Add(file);
+        return this;
+    }
+
     public string[] SaveAll(string saveAsBase)
     {
         List<string> filenames = [];
@@ -34,11 +43,13 @@ public class AnalysisResult
             filenames.Add(filename);
         }
 
-        return filenames.ToArray();
-    }
+        foreach (AnalysisTextFile file in TextFiles)
+        {
+            string filename = saveAsBase + $"_{file.Name}_{count++}.txt";
+            File.WriteAllText(filename, file.Contents);
+            filenames.Add(filename);
+        }
 
-    public void LaunchInteractive()
-    {
-        Plots.ForEach(x => x.LaunchInteractive());
+        return [.. filenames];
     }
 }

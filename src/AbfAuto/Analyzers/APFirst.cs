@@ -5,7 +5,10 @@ using ScottPlot;
 
 namespace AbfAuto.Analyzers;
 
-public class P0111_AP : IAnalyzer
+/// <summary>
+/// Analyze properties of the first AP in a slow IC ramp
+/// </summary>
+public class APFirst : IAnalyzer
 {
     public AnalysisResult Analyze(AbfSharp.ABF abf)
     {
