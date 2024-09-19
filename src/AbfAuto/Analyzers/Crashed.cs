@@ -13,7 +13,13 @@ public class Crashed(Exception exception) : IAnalyzer
         plot.Title($"{Path.GetFileName(abf.FilePath)}\n{abf.Header.Protocol}");
         plot.DataBackground.Color = Colors.Red.WithAlpha(.3);
 
-        var an = plot.Add.Annotation($"Crashed during analysis:\n{Exception.Message}\n{Exception}");
+        string message = 
+            $"Crashed during analysis!\n" +
+            $"{Exception.Message}\n" +
+            $"Exception details and stack trace are in a crash file\n" +
+            $"saved in the auto-analysis folder next to this ABF.";
+
+        var an = plot.Add.Annotation(message);
         an.LabelFontSize = 14;
         an.Alignment = Alignment.UpperLeft;
         an.LabelFontName = ScottPlot.Fonts.Monospace;
