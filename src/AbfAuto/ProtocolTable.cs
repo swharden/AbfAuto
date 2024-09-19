@@ -1,8 +1,17 @@
-﻿namespace AbfAuto;
+﻿using AbfAuto.DeveloperTools;
 
+namespace AbfAuto;
+
+/// <summary>
+/// Logic here determines which analyzer to apply to an ABF according to its protocol.
+/// </summary>
 public static class ProtocolTable
 {
-    private readonly static Dictionary<string, Type> AnalysesByProtocol = new()
+    /// <summary>
+    /// The recommended analyzer to use based on the starting characters of the protocol file filename.
+    /// After creating new analysis classes, add them to this table to enable them to be used by the auto-analyzer.
+    /// </summary>
+    private readonly static Dictionary<string, Type> AnalyzerTable = new()
     {
         { "0110", typeof(Analyzers.RMP) },
         { "0111", typeof(Analyzers.APFirst) },
@@ -27,35 +36,28 @@ public static class ProtocolTable
         { "EEG-3", typeof(Analyzers.InVivo3) },
     };
 
-    public static IAnalyzer GetAnalysis(AbfSharp.ABF abf)
+    /// <summary>
+    /// Return the recommended analyzer for the given ABF file
+    /// </summary>
+    public static IAnalyzer GetAnalyzer(AbfSharp.ABF abf)
     {
         string protocol = Path.GetFileNameWithoutExtension(abf.Header.AbfFileHeader.sProtocolPath);
 
-        foreach (string key in AnalysesByProtocol.Keys)
+        foreach (string key in AnalyzerTable.Keys)
         {
             if (protocol.StartsWith(key))
             {
-                object? inst = Activator.CreateInstance(AnalysesByProtocol[key]);
-
-                if (inst is IAnalyzer ian)
-                    return ian;
+                object? instance = Activator.CreateInstance(AnalyzerTable[key]);
+                if (instance is IAnalyzer analyzer)
+                    return analyzer;
                 else
-                    throw new InvalidOperationException($"{inst} is does not inherit {nameof(IAnalyzer)}");
+                    throw new InvalidOperationException($"{instance} is does not inherit {nameof(IAnalyzer)}");
             }
         };
 
-        using (TemporaryConsoleColor c = new(ConsoleColor.White, ConsoleColor.Magenta))
-        {
-            Console.WriteLine($"WARNING: Protocol '{protocol}' has no matching analyzer.");
-            Console.WriteLine($"Edit {nameof(ProtocolTable)}.cs to assign this protocol to an analyzer.");
-        }
-
-        object? unknownProtocolInstance = Activator.CreateInstance(typeof(Analyzers.Unknown));
-
-        if (unknownProtocolInstance is IAnalyzer upi)
-            return upi;
-        else
-            throw new InvalidOperationException();
-
+        using TemporaryConsoleColor c = new(ConsoleColor.White, ConsoleColor.Magenta);
+        Console.WriteLine($"WARNING: Protocol '{protocol}' has no matching analyzer.");
+        Console.WriteLine($"Edit {nameof(ProtocolTable)}.cs to assign this protocol to an analyzer.");
+        return new Analyzers.Unknown();
     }
 }

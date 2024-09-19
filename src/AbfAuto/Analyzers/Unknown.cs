@@ -1,4 +1,5 @@
-﻿using AbfSharp;
+﻿using AbfAuto.ScottPlotMods;
+using AbfSharp;
 using ScottPlot;
 
 namespace AbfAuto.Analyzers;

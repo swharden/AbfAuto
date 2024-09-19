@@ -1,4 +1,5 @@
 ﻿using AbfAuto.EventDetection;
+using AbfAuto.ScottPlotMods;
 using AbfSharp;
 
 using ScottPlot;

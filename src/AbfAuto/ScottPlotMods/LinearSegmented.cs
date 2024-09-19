@@ -1,6 +1,6 @@
 ﻿using ScottPlot;
 
-namespace AbfAuto;
+namespace AbfAuto.ScottPlotMods;
 
 public class LinearSegmented : ScottPlot.Colormaps.ColormapBase, IColormap
 {
@@ -29,7 +29,7 @@ public class LinearSegmented : ScottPlot.Colormaps.ColormapBase, IColormap
         double rangeSize = 1.0 / rangeCount;
 
         int firstColorIndex = (int)(position / rangeSize);
-        double positionInRange = (position - (rangeSize * firstColorIndex)) / rangeSize;
+        double positionInRange = (position - rangeSize * firstColorIndex) / rangeSize;
 
         Color color1 = Colors[firstColorIndex];
         Color color2 = Colors[firstColorIndex + 1];

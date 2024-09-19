@@ -1,4 +1,4 @@
-﻿namespace AbfAuto;
+﻿namespace AbfAuto.DeveloperTools;
 
 public class TemporaryConsoleColor : IDisposable
 {

@@ -1,4 +1,4 @@
-﻿namespace AbfAuto;
+﻿namespace AbfAuto.Images;
 
 public static class TifFile
 {

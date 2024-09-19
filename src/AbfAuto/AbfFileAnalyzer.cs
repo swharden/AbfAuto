@@ -26,7 +26,7 @@ public class AbfFileAnalyzer
         AbfSharp.ABF abf = new(AbfPath);
         string protocol = Path.GetFileNameWithoutExtension(abf.Header.AbfFileHeader.sProtocolPath);
 
-        IAnalyzer analysis = ProtocolTable.GetAnalysis(abf);
+        IAnalyzer analysis = ProtocolTable.GetAnalyzer(abf);
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine($"Protocol: {protocol}");

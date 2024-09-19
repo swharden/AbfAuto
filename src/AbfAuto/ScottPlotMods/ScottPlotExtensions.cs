@@ -1,11 +1,11 @@
 ﻿using AbfSharp;
 using ScottPlot;
 
-namespace AbfAuto;
+namespace AbfAuto.ScottPlotMods;
 
 public static class ScottPlotExtensions
 {
-    public static ScottPlot.Plottables.Signal AddSignalMS(this ScottPlot.Plot plot, Sweep sweep)
+    public static ScottPlot.Plottables.Signal AddSignalMS(this Plot plot, Sweep sweep)
     {
         var sig = plot.Add.Signal(sweep.Values, sweep.SamplePeriod * 1000);
         plot.XLabel("Time (msec)");
@@ -13,7 +13,7 @@ public static class ScottPlotExtensions
         return sig;
     }
 
-    public static Plot WithSignalColor(this Plot plot, ScottPlot.Color color)
+    public static Plot WithSignalColor(this Plot plot, Color color)
     {
         foreach (var sig in plot.GetPlottables<ScottPlot.Plottables.Signal>())
         {
@@ -40,7 +40,7 @@ public static class ScottPlotExtensions
             .ToArray();
 
         IColormap colormap = new LinearSegmented(colors);
-        return WithSignalColor(plot, colormap);
+        return plot.WithSignalColor(colormap);
     }
 
     public static Plot WithSignalAlpha(this Plot plot, double alpha)
@@ -121,12 +121,12 @@ public static class ScottPlotExtensions
 
     public static Plot WithYLabelVoltage(this Plot plot)
     {
-        return WithYLabel(plot, "Potential (mV)");
+        return plot.WithYLabel("Potential (mV)");
     }
 
     public static Plot WithYLabelCurrent(this Plot plot)
     {
-        return WithYLabel(plot, "Current (pA)");
+        return plot.WithYLabel("Current (pA)");
     }
 
     public static Plot WithXLabel(this Plot plot, string label)
@@ -137,15 +137,15 @@ public static class ScottPlotExtensions
 
     public static Plot WithXLabelSeconds(this Plot plot)
     {
-        return WithXLabel(plot, "Time (seconds)");
+        return plot.WithXLabel("Time (seconds)");
     }
 
     public static Plot WithXLabelMinutes(this Plot plot)
     {
-        return WithXLabel(plot, "Time (minutes)");
+        return plot.WithXLabel("Time (minutes)");
     }
 
-    public static Plot WithVerticalLinesAtTagTimes(this Plot plot, AbfSharp.ABF abf)
+    public static Plot WithVerticalLinesAtTagTimes(this Plot plot, ABF abf)
     {
         foreach (var tag in abf.Tags)
         {

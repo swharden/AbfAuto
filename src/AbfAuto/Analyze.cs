@@ -62,6 +62,6 @@ public static class Analyze
 
     public static string[] TifFile(string tifFilePath)
     {
-        return [AbfAuto.TifFile.AutoAnalyze(tifFilePath)];
+        return [Images.TifFile.AutoAnalyze(tifFilePath)];
     }
 }
