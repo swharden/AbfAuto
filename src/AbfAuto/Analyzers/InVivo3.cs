@@ -17,7 +17,7 @@ internal class InVivo3 : IAnalyzer
             .WithVerticalLinesAtTagTimes(abf)
             .WithTightHorizontalMargins();
         ch1Full.Axes.SetLimitsY(-.02, .02);
-        Plot ch1freq = CommonPlots.InVivo.GetEegFreqPlot(sweep1).WithVerticalLinesAtTagTimes(abf);
+        Plot ch1freq = CommonPlots.InVivo.GetEegFreqPlot().WithVerticalLinesAtTagTimes(abf);
 
         Sweep sweep2 = abf.GetAllData(1).Smooth(100).Detrend(1000);
         Plot ch2Full = CommonPlots.AllSweeps.ConsecutiveMinutes(sweep2)

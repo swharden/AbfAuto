@@ -1,6 +1,6 @@
 ﻿namespace AbfAuto.EventDetection;
 
-public class EventCollection(double sampleRate)
+public class InVivoEvents(double sampleRate)
 {
     public int Count => Indexes.Count;
     private readonly List<int> Indexes = [];

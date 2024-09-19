@@ -6,9 +6,10 @@ namespace AbfAuto.CommonPlots;
 
 internal static class InVivo
 {
-    public static Plot GetEegFreqPlot(Sweep sweep)
+    public static Plot GetEegFreqPlot()
     {
-        ScottPlot.Plot plot = new();
+        Plot plot = new();
+        // TODO: autoscale and detect EEG spindles
         plot.YLabel("Spindle (SPM)");
         plot.XLabel("Time (minutes)");
         return plot;
@@ -16,9 +17,10 @@ internal static class InVivo
 
     public static Plot GetEcgFreqPlot(Sweep sweep)
     {
-        EventCollection ec = new(sweep.SampleRate);
-        ec.AddIndexRange(Threshold.IndexesCrossingUp(sweep.Values.ToArray(), 4));
-        (double[] bins, double[] freqs) = ec.GetBinnedFrequency(sweep.Duration, 60, true);
+        // TODO: autoscale and do not use hard threshold detection
+        InVivoEvents events = new(sweep.SampleRate);
+        events.AddIndexRange(Threshold.IndexesCrossingUp(sweep.Values.ToArray(), 4));
+        (double[] bins, double[] freqs) = events.GetBinnedFrequency(sweep.Duration, 60, true);
         freqs = freqs.Select(x => x * 60).ToArray();
 
         ScottPlot.Plot plot = new();
@@ -33,9 +35,10 @@ internal static class InVivo
 
     public static Plot GetRespirationFreqPlot(Sweep sweep)
     {
-        EventCollection ec = new(sweep.SampleRate);
-        ec.AddIndexRange(Threshold.IndexesCrossingDown(sweep.Values.ToArray(), -10));
-        (double[] bins, double[] freqs) = ec.GetBinnedFrequency(sweep.Duration, 60, true);
+        // TODO: autoscale and do not use hard threshold detection
+        InVivoEvents events = new(sweep.SampleRate);
+        events.AddIndexRange(Threshold.IndexesCrossingDown(sweep.Values.ToArray(), -10));
+        (double[] bins, double[] freqs) = events.GetBinnedFrequency(sweep.Duration, 60, true);
         freqs = freqs.Select(x => x * 60).ToArray();
 
         ScottPlot.Plot plot = new();
