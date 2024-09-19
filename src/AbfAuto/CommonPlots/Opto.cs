@@ -1,4 +1,6 @@
-﻿using ScottPlot;
+﻿using AbfAuto.ScottPlotMods;
+using AbfSharp;
+using ScottPlot;
 
 namespace AbfAuto.CommonPlots;
 internal static class Opto
@@ -14,11 +16,20 @@ internal static class Opto
         int i1 = (int)(viewStart * abf.SampleRate);
         int i2 = (int)(viewEnd * abf.SampleRate);
 
+        // determine range to use for baseline subtraction
+        double baselineBackup1 = 0.5;
+        double baselineBackup2 = 0.1;
+        int b1 = Math.Max(0, i1 - (int)(abf.SampleRate * baselineBackup1));
+        int b2 = Math.Max(0, i1 - (int)(abf.SampleRate * baselineBackup2));
+
         // isolate data from each sweep around the opto pulse
         double[][] segments = new double[abf.SweepCount][];
         for (int i = 0; i < abf.SweepCount; i++)
         {
-            segments[i] = abf.GetSweep(i).Values[i1..i2];
+            Sweep sweep = abf.GetSweep(i);
+            double baseline = sweep.Values[b1..b2].Average();
+            sweep.SubtractInPlace(baseline);
+            segments[i] = sweep.Values[i1..i2];
         }
 
         // create a mean sweep
@@ -78,8 +89,8 @@ internal static class Opto
         plot2.Axes.SetLimitsX(viewStart, viewEnd);
 
         MultiPlot2 mp = new();
-        mp.AddSubplot(plot1, 0, 2, 0, 1);
-        mp.AddSubplot(plot2, 1, 2, 0, 1);
+        mp.AddSubplot(plot1.WithSignalHighQualityRendering(), 0, 2, 0, 1);
+        mp.AddSubplot(plot2.WithSignalHighQualityRendering(), 1, 2, 0, 1);
 
         return mp;
     }
