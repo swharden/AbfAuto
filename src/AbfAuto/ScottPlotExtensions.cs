@@ -1,7 +1,8 @@
-﻿using AbfSharp;
+﻿using AbfAuto.ScottPlotMods;
+using AbfSharp;
 using ScottPlot;
 
-namespace AbfAuto.ScottPlotMods;
+namespace AbfAuto;
 
 public static class ScottPlotExtensions
 {

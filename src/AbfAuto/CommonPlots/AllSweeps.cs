@@ -1,6 +1,5 @@
 ﻿using ScottPlot;
 using AbfSharp;
-using AbfAuto.ScottPlotMods;
 
 namespace AbfAuto.CommonPlots;
 

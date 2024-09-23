@@ -1,5 +1,4 @@
 ﻿using AbfAuto.Memtest;
-using AbfAuto.ScottPlotMods;
 using AbfSharp;
 using ScottPlot;
 
