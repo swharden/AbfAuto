@@ -18,6 +18,9 @@ public static class Program
         if (args.Length != 1)
             throw new ArgumentException("Expected a single argument (path to an ABF file)");
 
+        if (!Path.Exists(args[0]))
+            throw new ArgumentException($"Path does not exist: {args[0]}");
+
         Analyze.Path(args[0]);
     }
 }

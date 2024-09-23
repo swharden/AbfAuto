@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AbfFolderWatcher", "AbfFold
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AbfAuto", "AbfAuto\AbfAuto.csproj", "{B598B224-084A-4550-B8E8-FDA2F8BAD8CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbfAutoTests", "AbfAutoTests\AbfAutoTests.csproj", "{D119472A-7C75-45BC-9BEA-9DB3144D1FE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{B598B224-084A-4550-B8E8-FDA2F8BAD8CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B598B224-084A-4550-B8E8-FDA2F8BAD8CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B598B224-084A-4550-B8E8-FDA2F8BAD8CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D119472A-7C75-45BC-9BEA-9DB3144D1FE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D119472A-7C75-45BC-9BEA-9DB3144D1FE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D119472A-7C75-45BC-9BEA-9DB3144D1FE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D119472A-7C75-45BC-9BEA-9DB3144D1FE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
