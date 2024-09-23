@@ -154,4 +154,9 @@ public static class ScottPlotExtensions
 
         return plot;
     }
+
+    public static void EnableHighQualitySignalPlots(this MultiPlot2 mp)
+    {
+        mp.Subplots.Select(x => x.Plot).ToList().ForEach(x => x.WithSignalHighQualityRendering());
+    }
 }
