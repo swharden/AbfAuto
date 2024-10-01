@@ -35,6 +35,10 @@ public class AnalysisResult
     {
         List<string> filenames = [];
 
+        string outputFolder = Path.GetDirectoryName(saveAsBase) ?? throw new NullReferenceException();
+        if (!Directory.Exists(outputFolder))
+            Directory.CreateDirectory(outputFolder);
+
         int count = 0;
         foreach (SizedPlot sp in Plots)
         {

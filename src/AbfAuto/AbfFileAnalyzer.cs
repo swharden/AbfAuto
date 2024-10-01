@@ -23,7 +23,23 @@ public class AbfFileAnalyzer
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine($"Analyzing: {AbfPath}");
 
-        AbfSharp.ABF abf = new(AbfPath);
+        AbfSharp.ABF abf;
+        try
+        {
+            abf = new(AbfPath);
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine($"Error Loading ABF: {ex.Message}");
+            Console.WriteLine(ex);
+
+            AnalysisResult result2 = Analyzers.Crashed.LoadingAbf(AbfPath, ex);
+            string saveAsBase2 = Path.Combine(AnalysisFolderPath, $"{AbfID}_AbfAuto_CrashedLoading");
+            string[] filenames2 = result2.SaveAll(saveAsBase2);
+            return filenames2;
+        }
+
         string protocol = Path.GetFileNameWithoutExtension(abf.Header.AbfFileHeader.sProtocolPath);
 
         IAnalyzer analysis = ProtocolTable.GetAnalyzer(abf);

@@ -6,6 +6,12 @@ namespace AbfAutoTests;
 
 internal class EventDetectionTests
 {
+    struct Event
+    {
+        int PeakIndex;
+        int AntiPeakIndex;
+    }
+
     [Test]
     public void Test_SlowEventDetection_Respiration()
     {
@@ -22,9 +28,31 @@ internal class EventDetectionTests
             .Detrend(TimeSpan.FromSeconds(10))
             .Values;
 
-        int[] indexes = FindPositivePeaks(ddValues);
+        int[] peakIndexes = FindPositivePeaks(ddValues);
+        int[] antiPeakIndexes = GetPeaksBetween(peakIndexes, sweep.Values);
 
-        LaunchEventInspector(sweep, indexes);
+        LaunchEventInspector(sweep, peakIndexes, antiPeakIndexes);
+    }
+
+    public static int[] GetPeaksBetween(int[] indexes, double[] values)
+    {
+        int[] peakIndexes = new int[indexes.Length];
+        for (int i = 0; i < indexes.Length; i++)
+        {
+            int i1 = indexes[i];
+            int i2 = i < (indexes.Length - 1) ? indexes[i + 1] : values.Length - 1;
+            peakIndexes[i] = -1;
+            double peakValue = double.NegativeInfinity;
+            for (int j = i1; j < i2; j++)
+            {
+                if (values[j] > peakValue)
+                {
+                    peakIndexes[i] = j;
+                    peakValue = values[j];
+                }
+            }
+        }
+        return peakIndexes;
     }
 
     public static void LaunchInspector(Sweep sweep)
@@ -38,17 +66,22 @@ internal class EventDetectionTests
         ScottPlot.WinForms.FormsPlotViewer.Launch(plot);
     }
 
-    public static void LaunchEventInspector(Sweep sweep, int[] indexes)
+    public static void LaunchEventInspector(Sweep sweep, int[] peakIndexes, int[] antiPeakIndexes)
     {
         ScottPlot.Plot plot = new();
         var sm = plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
         sm.LineWidth = 2;
         sm.Color = Colors.Black;
 
-        double[] times = indexes.Select(x => x / sweep.SampleRate).ToArray();
-        double[] values = indexes.Select(x => sweep.Values[x]).ToArray();
-        var ms = plot.Add.Markers(times, values);
-        ms.MarkerColor = Colors.Red;
+        double[] times1 = peakIndexes.Select(x => x / sweep.SampleRate).ToArray();
+        double[] values1 = peakIndexes.Select(x => sweep.Values[x]).ToArray();
+        var ms1 = plot.Add.Markers(times1, values1);
+        ms1.MarkerColor = Colors.Red;
+
+        double[] times2 = antiPeakIndexes.Select(x => x / sweep.SampleRate).ToArray();
+        double[] values2 = antiPeakIndexes.Select(x => sweep.Values[x]).ToArray();
+        var ms2 = plot.Add.Markers(times2, values2);
+        ms2.MarkerColor = Colors.Blue;
 
         plot.Axes.SetLimitsX(1000, 1000 + 60);
         ScottPlot.WinForms.FormsPlotViewer.Launch(plot);

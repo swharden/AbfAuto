@@ -11,7 +11,7 @@ public static class Program
     {
         if (System.Diagnostics.Debugger.IsAttached)
         {
-            string testPath = @"X:\Software\ABF protocols\abfs\0202 VC IV.abf";
+            string testPath = @"X:\Data\Alchem\IN-VIVO\Phase-4\abfs\2024-10-01\2024_10_01_EEG_0001.abf";
             args = [testPath];
         }
 
