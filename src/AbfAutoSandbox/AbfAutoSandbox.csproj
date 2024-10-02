@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <PlatformTarget>x86</PlatformTarget>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <UseWindowsForms>true</UseWindowsForms>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="abfsharp" Version="0.7.2" />
+        <PackageReference Include="scottplot" Version="5.0.39" />
+        <PackageReference Include="scottplot.winforms" Version="5.0.39" />
+    </ItemGroup>
+
+</Project>
