@@ -54,13 +54,30 @@ public class CycleDetector
         }
     }
 
-    public void ApplyDetrend(double ms)
+    public void ApplySuccessiveDetrend(double ms)
     {
         double[] startingTrace = Trace;
         ApplySuccessiveSmoothing(ms);
         for (int i = 0; i < Trace.Length; i++)
         {
             Trace[i] = startingTrace[i] - Trace[i];
+        }
+    }
+
+    public void ApplyDerivative()
+    {
+        for (int i = Trace.Length - 1; i > 0; i--)
+        {
+            Trace[i] = Trace[i] - Trace[i - 1];
+        }
+        Trace[0] = Trace[1];
+    }
+
+    public void ApplyRectify()
+    {
+        for (int i = 0; i<Trace.Length; i++)
+        {
+            Trace[i] = Math.Abs(Trace[i]);
         }
     }
 

@@ -6,9 +6,12 @@ public readonly struct BinnedEvents
     public readonly double[] Times;
     public readonly double[] Freqs;
     public readonly double[] FreqMinutes;
+    public readonly Cycle[] AllCycles;
 
     public BinnedEvents(Cycle[] cycles, double recordingLength, double binSize)
     {
+        AllCycles = cycles;
+
         int binCount = (int)Math.Ceiling(recordingLength / binSize);
         Times = Enumerable.Range(0, binCount).Select(x => x * binSize / 60).ToArray();
 
