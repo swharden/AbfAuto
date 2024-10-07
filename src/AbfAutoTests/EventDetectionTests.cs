@@ -6,16 +6,11 @@ namespace AbfAutoTests;
 
 internal class EventDetectionTests
 {
-    struct Event
-    {
-        int PeakIndex;
-        int AntiPeakIndex;
-    }
-
     [Test]
+    [Ignore("interactive")]
     public void Test_SlowEventDetection_Respiration()
     {
-        string abfPath = Path.Combine(Paths.SampleAbfFolder, "EEG-3 EEG Resp ECG.abf");
+        string abfPath = Path.Combine(SampleAbfs.Folder, "EEG-3 EEG Resp ECG.abf");
         ABF abf = new(abfPath);
 
         Sweep sweep = abf.GetAllData(1)

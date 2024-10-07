@@ -21,17 +21,22 @@ public static class ProtocolTable
 
         { "0201", typeof(Analyzers.Memtest) },
         { "0202", typeof(Analyzers.IVWithTail) },
+        // TODO: 2P 0208 (bigger steps)
 
         { "0301", typeof(Analyzers.APFreqOverTime) },
 
         { "0405", typeof(Analyzers.MemtestRepeated) },
         { "0406", typeof(Analyzers.MemtestRepeated) },
+        // TODO: event detection 0427, 0428, 0429
+        // 0426: NMDA STEPS
 
         { "0501", typeof(Analyzers.OptoMeanEpoch2) },
         { "0503", typeof(Analyzers.OptoMeanEpoch1) },
         { "0509", typeof(Analyzers.OptoMeanEpoch1) },
 
         { "0804", typeof(Analyzers.BAP) },
+        // TODO: 0807 ???
+        // TODO: 0815 ???
 
         { "EEG-3", typeof(Analyzers.InVivo3) },
     };
