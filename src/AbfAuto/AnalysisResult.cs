@@ -6,7 +6,10 @@ public class AnalysisResult
 {
     List<SizedPlot> Plots { get; } = [];
     List<AnalysisTextFile> TextFiles { get; } = [];
+    List<AnalysisCsvFile> CsvFiles { get; } = [];
+
     readonly record struct AnalysisTextFile(string Name, string Contents);
+    readonly record struct AnalysisCsvFile(string Name, string Contents);
 
     public static AnalysisResult Single(Plot plot, int width = 800, int height = 600)
     {
@@ -31,6 +34,13 @@ public class AnalysisResult
         return this;
     }
 
+    public AnalysisResult WithCsvFile(string name, string contents)
+    {
+        AnalysisCsvFile file = new(name, contents);
+        CsvFiles.Add(file);
+        return this;
+    }
+
     public string[] SaveAll(string saveAsBase)
     {
         List<string> filenames = [];
@@ -50,6 +60,13 @@ public class AnalysisResult
         foreach (AnalysisTextFile file in TextFiles)
         {
             string filename = saveAsBase + $"_{file.Name}_{count++}.txt";
+            File.WriteAllText(filename, file.Contents);
+            filenames.Add(filename);
+        }
+
+        foreach (AnalysisCsvFile file in CsvFiles)
+        {
+            string filename = saveAsBase + $"_{file.Name}_{count++}.csv";
             File.WriteAllText(filename, file.Contents);
             filenames.Add(filename);
         }

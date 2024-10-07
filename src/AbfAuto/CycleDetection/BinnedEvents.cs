@@ -1,4 +1,6 @@
-﻿namespace AbfAuto.CycleDetection;
+﻿using System.Text;
+
+namespace AbfAuto.CycleDetection;
 
 public readonly struct BinnedEvents
 {
@@ -44,5 +46,22 @@ public readonly struct BinnedEvents
 
         // events per second
         return (cycles.Count - 1) / (cycles.Last().StartTime - cycles.First().StartTime);
+    }
+
+    public string ToCsv(int baselineCount = 5)
+    {
+        StringBuilder sb = new();
+
+        sb.AppendLine("Time (min), Events/min, Amplitude (raw), Amplitude (%)");
+
+        double baseline = MeanAmplitude.Take(baselineCount).Average();
+        double[] norm = MeanAmplitude.Select(x => x / baseline * 100).ToArray();
+
+        for (int i = 0; i < TimesMinutes.Length; i++)
+        {
+            sb.AppendLine($"{TimesMinutes[i]},{FreqMinutes[i]},{MeanAmplitude[i]},{norm[i]}");
+        }
+
+        return sb.ToString();
     }
 }

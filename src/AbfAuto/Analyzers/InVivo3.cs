@@ -31,7 +31,9 @@ internal class InVivo3 : IAnalyzer
         mp.AddSubplot(PlotFreq(abf, binnedHeartbeats, "Beats/Minute"), 2, 3, 1, 3);
         mp.AddSubplot(PlotAmp(abf, binnedHeartbeats, "Amplitude (%)"), 2, 3, 2, 3);
 
-        return AnalysisResult.Single(mp);
+        return AnalysisResult.Single(mp)
+            .WithCsvFile("breaths", binnedBreaths.ToCsv())
+            .WithCsvFile("heartbeats", binnedHeartbeats.ToCsv());
     }
 
     ScottPlot.Plot PlotFullSweep(ABF abf, int channel, string name)
