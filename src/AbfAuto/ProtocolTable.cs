@@ -34,6 +34,7 @@ public static class ProtocolTable
         { "0509", typeof(Analyzers.OptoMeanEpoch1) },
 
         { "0804", typeof(Analyzers.BAP) },
+        { "0807", typeof(Analyzers.Uncaging) },
 
         { "EEG-3", typeof(Analyzers.InVivo3) },
     };

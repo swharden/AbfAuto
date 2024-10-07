@@ -5,7 +5,7 @@ public class SampleAbfTests
     [Test]
     public void Test_Analyze_ABF()
     {
-        string path = @"X:\Software\ABF protocol tests\abfs\0426 NMDA steps.abf";
+        string path = @"X:\Software\ABF protocol tests\abfs\0807 uncaging.abf";
         string[] savedFiles = AbfAuto.Analyze.AbfFile(path);
         foreach(string savedFile in savedFiles)
         {
