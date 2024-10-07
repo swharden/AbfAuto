@@ -21,7 +21,7 @@ public static class ProtocolTable
 
         { "0201", typeof(Analyzers.Memtest) },
         { "0202", typeof(Analyzers.IVWithTail) },
-        // TODO: 2P 0208 (bigger steps)
+        { "0208", typeof(Analyzers.IVStepEnd) },
 
         { "0301", typeof(Analyzers.APFreqOverTime) },
 
