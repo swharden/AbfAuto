@@ -1,5 +1,4 @@
-﻿using ScottPlot;
-namespace AbfAutoSandbox;
+﻿namespace AbfAuto.CycleDetection;
 
 public readonly struct Cycle
 {

@@ -10,9 +10,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="abfsharp" Version="0.7.2" />
+        <PackageReference Include="abfsharp" Version="0.7.3" />
         <PackageReference Include="scottplot" Version="5.0.39" />
         <PackageReference Include="scottplot.winforms" Version="5.0.39" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AbfAuto\AbfAuto.csproj" />
     </ItemGroup>
 
 </Project>

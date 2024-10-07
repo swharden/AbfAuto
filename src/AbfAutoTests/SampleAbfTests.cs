@@ -5,11 +5,13 @@ public class SampleAbfTests
     [Test]
     public void Test_Analyze_ABF()
     {
-        string path = @"X:\Software\ABF protocol tests\abfs\0807 uncaging.abf";
-        string[] savedFiles = AbfAuto.Analyze.AbfFile(path);
-        foreach(string savedFile in savedFiles)
+        foreach(string path in Directory.GetFiles(@"X:\Data\Alchem\IN-VIVO\Phase-4\abfs\2024-10-04", "*.abf"))
         {
-            Console.WriteLine(savedFile);
+            string[] savedFiles = AbfAuto.Analyze.AbfFile(path);
+            foreach (string savedFile in savedFiles)
+            {
+                Console.WriteLine(savedFile);
+            }
         }
     }
 

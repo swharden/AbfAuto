@@ -2,46 +2,25 @@
  * to create analysis routines which may eventually ybe moved into the AbfAuto project.
  */
 
-using AbfAutoSandbox;
-using ScottPlot;
-using AbfSharp;
-
 namespace AbfAUtoSandbox;
 
 public static class Program
 {
     public static void Main()
     {
-        string pathHome = @"C:\Users\scott\University of Florida\Frazier Lab - Documents\Users_Public\Scott\2024-10-02 in vivo event detection\2024_10_01_EEG_0002.abf";
-        string pathWork = @"X:\Data\Alchem\IN-VIVO\Phase-4\abfs\2024-10-01\2024_10_01_EEG_0002.abf";
-        string abfPath = File.Exists(pathHome) ? pathHome : pathWork;
-        ABF abf = new(abfPath);
 
-        BinnedEvents bin = DetectEcg(abf);
-        bin.ShowRateOverTime();
-    }
-
-    public static BinnedEvents DetectBreathing(ABF abf, int channelIndex = 1)
-    {
-        // TODO: support recordings that stop breathing entirely
-        Sweep sweep = abf.GetAllData(channelIndex: channelIndex);
-        CycleDetector detector = new(sweep.Values, sweep.SampleRate);
-        detector.ApplySuccessiveSmoothing(1_000);
-        detector.ApplySuccessiveDetrend(10_000);
-        return detector.GetDownwardCyclesBinned();
-    }
-
-    public static BinnedEvents DetectEcg(ABF abf, int channelIndex = 2)
-    {
-        // TODO: support recordings that stop beating entirely
-        Sweep sweep = abf.GetAllData(channelIndex: 2);
-        CycleDetector detector = new(sweep.Values, sweep.SampleRate);
-        detector.ApplyDerivative();
-        detector.ApplyDerivative();
-        detector.ApplyRectify();
-        double[] original = detector.Trace.ToArray();
-        detector.ApplySuccessiveSmoothing(100);
-        detector.ApplySuccessiveDetrend(1_000);
-        return detector.GetDownwardCyclesBinned();
+        //string[] abfPaths = Directory.GetFiles(@"X:\Data\Alchem\IN-VIVO\Phase-4\abfs\", "*.abf", SearchOption.AllDirectories);
+        string[] abfPaths = [@"X:\Data\Alchem\IN-VIVO\Phase-4\abfs\2024-10-04\2024_10_04_EEG_0000.abf"];
+        for (int i = 0; i < abfPaths.Length; i++)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"Analyzing {i + 1}/{abfPaths.Length}");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            string[] savedFiles = AbfAuto.Analyze.AbfFile(abfPaths[i]);
+            foreach (string savedFile in savedFiles)
+            {
+                Console.WriteLine(savedFile);
+            }
+        }
     }
 }

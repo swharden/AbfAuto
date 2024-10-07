@@ -1,31 +1,37 @@
-﻿namespace AbfAutoSandbox;
+﻿namespace AbfAuto.CycleDetection;
 
 public readonly struct BinnedEvents
 {
     public readonly int[] Counts;
-    public readonly double[] Times;
+    public readonly double[] TimesMinutes;
     public readonly double[] Freqs;
     public readonly double[] FreqMinutes;
+    public readonly double[] MeanAmplitude;
     public readonly Cycle[] AllCycles;
+    public readonly List<Cycle>[] BinnedCycles;
 
     public BinnedEvents(Cycle[] cycles, double recordingLength, double binSize)
     {
         AllCycles = cycles;
 
         int binCount = (int)Math.Ceiling(recordingLength / binSize);
-        Times = Enumerable.Range(0, binCount).Select(x => x * binSize / 60).ToArray();
+        TimesMinutes = Enumerable.Range(0, binCount).Select(x => x * binSize / 60).ToArray();
 
-        List<Cycle>[] binnedCycles = Enumerable.Range(0, binCount).Select(x => new List<Cycle>()).ToArray();
+        BinnedCycles = Enumerable.Range(0, binCount).Select(x => new List<Cycle>()).ToArray();
 
         foreach (Cycle cycle in cycles)
         {
             int binIndex = (int)(cycle.StartTime / binSize);
-            binnedCycles[binIndex].Add(cycle);
+            BinnedCycles[binIndex].Add(cycle);
         }
 
-        Counts = binnedCycles.Select(x => x.Count).ToArray();
-        Freqs = binnedCycles.Select(x => GetFreq(x, binSize)).ToArray();
+        Counts = BinnedCycles.Select(x => x.Count).ToArray();
+        Freqs = BinnedCycles.Select(x => GetFreq(x, binSize)).ToArray();
         FreqMinutes = Freqs.Select(x => x * 60).ToArray();
+        MeanAmplitude = BinnedCycles
+            .Select(x => x.Select(x => x.Amplitude))
+            .Select(x => x.Any() ? x.Average() : double.NaN)
+            .ToArray();
     }
 
     private static double GetFreq(List<Cycle> cycles, double binSize)

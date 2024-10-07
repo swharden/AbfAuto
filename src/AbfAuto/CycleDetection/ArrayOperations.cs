@@ -1,6 +1,4 @@
-﻿using AbfSharp;
-
-namespace AbfAutoSandbox;
+﻿namespace AbfAuto.CycleDetection;
 
 public static class ArrayOperations
 {

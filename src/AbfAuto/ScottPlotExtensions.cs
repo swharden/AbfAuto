@@ -1,5 +1,6 @@
 ﻿using AbfAuto.ScottPlotMods;
 using AbfSharp;
+using OpenTK.Graphics.OpenGL;
 using ScottPlot;
 
 namespace AbfAuto;
@@ -96,6 +97,21 @@ public static class ScottPlotExtensions
     public static Plot WithTightHorizontalMargins(this Plot plot)
     {
         plot.Axes.Margins(horizontal: 0);
+        return plot;
+    }
+
+    public static Plot WithPercentileVerticalMargins(this Plot plot, double percentile = .95, double extra = 1.5)
+    {
+        double[] values = plot.GetPlottables<ScottPlot.Plottables.Signal>().First().Data.GetYs().ToArray();
+        Array.Sort(values);
+        int i1 = (int)(values.Length * (1 - percentile));
+        int i2 = (int)(values.Length * percentile);
+        double min = values[i1];
+        double max = values[i2];
+        double span = max - min;
+        min -= extra * span;
+        max += extra * span;
+        plot.Axes.SetLimitsY(min, max);
         return plot;
     }
 

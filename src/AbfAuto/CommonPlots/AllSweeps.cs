@@ -50,7 +50,7 @@ public static class AllSweeps
 
     public static Plot ConsecutiveMinutes(AbfSharp.ABF abf, int channelIndex = 0)
     {
-        return ConsecutiveMinutes(abf.GetAllData(channelIndex));
+        return ConsecutiveMinutes(abf.GetAllDataDecimated(channelIndex));
     }
 
     public static Plot ConsecutiveMinutes(Sweep sweep)

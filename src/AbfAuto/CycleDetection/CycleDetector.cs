@@ -1,18 +1,10 @@
-﻿using System.Collections.ObjectModel;
-
-namespace AbfAutoSandbox;
+﻿namespace AbfAuto.CycleDetection;
 
 public class CycleDetector
 {
-    public ReadOnlyCollection<double> OriginalTrace { get; }
     public double SampleRate { get; }
     public double SamplePeriodSec => 1.0 / SampleRate;
     public double SamplePeriodMin => SamplePeriodSec / 60.0;
-
-    /// <summary>
-    /// This array starts as <see cref="OriginalTrace"/> but its contents get manipulated by "Apply" methods in this class.
-    /// This is the array used for event detection when <see cref="DetectEvents"/> is called.
-    /// </summary>
     public double[] Trace { get; private set; }
 
     public CycleDetector(double[] values, double sampleRate)
@@ -20,23 +12,10 @@ public class CycleDetector
         if (values is null || values.Length == 0)
             throw new InvalidDataException(nameof(values));
 
-        OriginalTrace = values.AsReadOnly();
         SampleRate = sampleRate;
 
         Trace = new double[values.Length];
         Array.Copy(values, Trace, values.Length);
-    }
-
-    public double[] GetTimes()
-    {
-        double[] times = new double[OriginalTrace.Count];
-
-        for (int i = 0; i < times.Length; i++)
-        {
-            times[i] = i / SampleRate;
-        }
-
-        return times;
     }
 
     public void ApplySmoothing(double ms)
