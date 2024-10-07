@@ -35,13 +35,6 @@ public class IVStepEnd : IAnalyzer
         return AnalysisResult.Single(mp);
     }
 
-    public static double GetMean(double[] values, double startFraction = 0.75, double endFraction = 1)
-    {
-        int i1 = (int)(values.Length * startFraction);
-        int i2 = (int)(values.Length * endFraction);
-        return values[i1..i2].Average();
-    }
-
     public static (double[] voltages, double[] currents) GetIvPoints(AbfSharp.ABF abf, int epoch = 1)
     {
         double[] voltages = Enumerable
@@ -51,8 +44,7 @@ public class IVStepEnd : IAnalyzer
 
         double[] currents = Enumerable
             .Range(0, abf.SweepCount)
-            .Select(x => abf.GetSweep(x))
-            .Select(x => GetMean(x.Values))
+            .Select(x => abf.GetSweep(x).MeanOfFraction(.75, 1.0))
             .ToArray();
 
         return (voltages, currents);

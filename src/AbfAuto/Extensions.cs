@@ -62,4 +62,11 @@ public static class Extensions
 
         return sweep.WithValues(values);
     }
+
+    public static double MeanOfFraction(this Sweep sweep, double startFraction, double endFraction)
+    {
+        int i1 = (int)(sweep.Values.Length * startFraction);
+        int i2 = (int)(sweep.Values.Length * endFraction);
+        return sweep.Values[i1..i2].Average();
+    }
 }
