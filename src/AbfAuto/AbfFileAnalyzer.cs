@@ -16,12 +16,10 @@ public class AbfFileAnalyzer
         AbfPath = Path.GetFullPath(abfPath);
     }
 
-    public string[] Analyze(bool overwrite = true)
+    public string[] Analyze()
     {
-        Stopwatch sw = Stopwatch.StartNew();
-
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine($"Analyzing: {AbfPath}");
+        Console.WriteLine($"Analyzing {AbfPath}");
 
         AbfSharp.ABF abf;
         try
@@ -42,18 +40,16 @@ public class AbfFileAnalyzer
 
         string protocol = Path.GetFileNameWithoutExtension(abf.Header.AbfFileHeader.sProtocolPath);
 
-        IAnalyzer analysis = ProtocolTable.GetAnalyzer(abf);
+        IAnalyzer analyzer = ProtocolTable.GetAnalyzer(abf);
+        string analyzerName = analyzer.ToString()!.Split(".").Last();
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine($"Protocol: {protocol}");
-        Console.WriteLine($"Analysis: {analysis}");
-        AnalysisResult result = ExecuteAnalysis(abf, analysis);
+        Console.WriteLine($"Protocol '{protocol}' uses the '{analyzerName}' analyzer");
+        AnalysisResult result = ExecuteAnalysis(abf, analyzer);
 
-        string saveAsName = analysis.ToString()!.Split(".").Last();
+        string saveAsName = analyzer.ToString()!.Split(".").Last();
         string saveAsBase = Path.Combine(AnalysisFolderPath, $"{AbfID}_AbfAuto_{saveAsName}");
         string[] filenames = result.SaveAll(saveAsBase);
-
-        Console.WriteLine($"Completed in: {sw.Elapsed.TotalSeconds:N2} sec");
 
         return filenames;
     }

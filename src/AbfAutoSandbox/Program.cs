@@ -8,8 +8,8 @@ public static class Program
 {
     public static void Main()
     {
-        string[] abfPaths = Directory.GetFiles(@"X:\Data\Alchem\IN-VIVO\Phase-4\abfs\", "*.abf", SearchOption.AllDirectories);
-        //string[] abfPaths = [@"X:\Data\Alchem\IN-VIVO\Phase-4\abfs\2024-10-04\2024_10_04_EEG_0000.abf"];
+        //string[] abfPaths = Directory.GetFiles(@"X:\Data\Alchem\IN-VIVO\Phase-4\abfs\", "*.abf", SearchOption.AllDirectories);
+        string[] abfPaths = [@"X:\Software\ABF protocol tests\abfs\0427 events -50.abf"];
         for (int i = 0; i < abfPaths.Length; i++)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -18,7 +18,7 @@ public static class Program
             string[] savedFiles = AbfAuto.Analyze.AbfFile(abfPaths[i]);
             foreach (string savedFile in savedFiles)
             {
-                Console.WriteLine(savedFile);
+                Console.WriteLine($"Saved: {savedFile}");
             }
         }
     }

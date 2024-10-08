@@ -1,4 +1,4 @@
-﻿using AbfAuto.DeveloperTools;
+﻿using System.Windows.Forms;
 
 namespace AbfAuto;
 
@@ -29,6 +29,10 @@ public static class ProtocolTable
         { "0406", typeof(Analyzers.MemtestRepeated) },
         { "0426", typeof(Analyzers.NmdaOverTime) },
 
+        { "0427", typeof(Analyzers.StackedEvents) },
+        { "0428", typeof(Analyzers.StackedEvents) },
+        { "0429", typeof(Analyzers.StackedEvents) },
+
         { "0501", typeof(Analyzers.OptoMeanEpoch2) },
         { "0503", typeof(Analyzers.OptoMeanEpoch1) },
         { "0509", typeof(Analyzers.OptoMeanEpoch1) },
@@ -58,9 +62,15 @@ public static class ProtocolTable
             }
         };
 
-        using TemporaryConsoleColor c = new(ConsoleColor.White, ConsoleColor.Magenta);
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.BackgroundColor = ConsoleColor.Magenta;
+
         Console.WriteLine($"WARNING: Protocol '{protocol}' has no matching analyzer.");
         Console.WriteLine($"Edit {nameof(ProtocolTable)}.cs to assign this protocol to an analyzer.");
+
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.BackgroundColor = ConsoleColor.Black;
+
         return new Analyzers.Unknown();
     }
 }

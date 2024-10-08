@@ -21,13 +21,13 @@ public class AbfFolderAnalyzer
         }
     }
 
-    public void AnalyzeIndex(int index, bool overwrite = true)
+    public void AnalyzeIndex(int index)
     {
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine($"Analyzing ABF {index + 1} of {AbfFilePaths.Length}");
 
         AbfFileAnalyzer analyzer = new(AbfFilePaths[index]);
-        string[] savedFiles = analyzer.Analyze(overwrite);
+        string[] savedFiles = analyzer.Analyze();
 
         Console.ForegroundColor = ConsoleColor.Blue;
         Console.WriteLine(string.Join("\n", savedFiles));
