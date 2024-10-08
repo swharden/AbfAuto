@@ -13,9 +13,13 @@ internal class InVivo3 : IAnalyzer
     {
         // plot raw traces
         MultiPlot2 mp = new();
-        mp.AddSubplot(PlotFullSweep(abf, 0, "Brain"), 0, 3, 0, 3);
+        mp.AddSubplot(PlotFullSweep(abf, 0, "Brain EEG"), 0, 3, 0, 3);
         mp.AddSubplot(PlotFullSweep(abf, 1, "Respiration"), 1, 3, 0, 3);
-        mp.AddSubplot(PlotFullSweep(abf, 2, "Cardiac"), 2, 3, 0, 3);
+        mp.AddSubplot(PlotFullSweep(abf, 2, "Cardiac ECG"), 2, 3, 0, 3);
+
+        // spindles are not currently being recorded (y tho?)
+        mp.AddSubplot(MessagePlot("Spindles/Minute"), 0, 3, 1, 3);
+        mp.AddSubplot(MessagePlot("Amplitude (%)"), 0, 3, 2, 3);
 
         // plot respiration
         Cycle[] breaths = DetectBreaths(abf);
@@ -34,6 +38,13 @@ internal class InVivo3 : IAnalyzer
         return AnalysisResult.Single(mp)
             .WithCsvFile("breaths", binnedBreaths.ToCsv())
             .WithCsvFile("heartbeats", binnedHeartbeats.ToCsv());
+    }
+
+    ScottPlot.Plot MessagePlot(string message)
+    {
+        ScottPlot.Plot plot = new();
+        plot.YLabel(message);
+        return plot;
     }
 
     ScottPlot.Plot PlotFullSweep(ABF abf, int channel, string name)

@@ -8,8 +8,8 @@ public static class Program
 {
     public static void Main()
     {
-        //string[] abfPaths = Directory.GetFiles(@"X:\Data\Alchem\IN-VIVO\Phase-4\abfs\", "*.abf", SearchOption.AllDirectories);
-        string[] abfPaths = [@"X:\Software\ABF protocol tests\abfs\0427 events -50.abf"];
+        string[] abfPaths = Directory.GetFiles(@"X:\Data\Alchem\IN-VIVO\Phase-4\abfs\", "*.abf", SearchOption.AllDirectories);
+        //string[] abfPaths = [@"X:\Software\ABF protocol tests\abfs\EEG-3 EEG Resp ECG.abf"];
         for (int i = 0; i < abfPaths.Length; i++)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
