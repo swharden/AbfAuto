@@ -7,9 +7,19 @@ internal class StackedEvents : IAnalyzer
 {
     public AnalysisResult Analyze(ABF abf)
     {
+        double deltaY = 10;
+
         Plot plot = new();
 
-        double stackHeight = 10;
+        ScottPlot.Plottables.ScaleBar scalebar = new()
+        {
+            Width = 0.1,
+            Height = deltaY,
+            XLabel = "100 ms",
+            YLabel = "10 pA",
+        };
+
+        plot.Add.Plottable(scalebar);
 
         for (int i = 0; i < abf.SweepCount; i++)
         {
@@ -21,7 +31,7 @@ internal class StackedEvents : IAnalyzer
             var sig = plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
             sig.Color = Colors.C0.WithAlpha(.8);
             sig.LineWidth = 1.5f;
-            sig.Data.YOffset = i * stackHeight;
+            sig.Data.YOffset = i * deltaY;
         }
 
         plot.Axes.Frameless();
