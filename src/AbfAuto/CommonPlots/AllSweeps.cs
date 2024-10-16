@@ -27,6 +27,27 @@ public static class AllSweeps
         return plot;
     }
 
+    public static Plot OverlappingTimeRange(AbfSharp.ABF abf, double time1, double time2, int smoothPoints)
+    {
+        int i1 = (int)(time1 * abf.SampleRate);
+        int i2 = (int)(time2 * abf.SampleRate);
+
+        Plot plot = new();
+
+        for (int i = 0; i < abf.SweepCount; i++)
+        {
+            Sweep sweep = abf.GetSweep(i).SubSweepByIndex(i1, i2);
+
+            if (smoothPoints > 0)
+                sweep = sweep.Smooth(smoothPoints);
+
+            var sig = plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
+            sig.LineWidth = 1.5f;
+        }
+
+        return plot;
+    }
+
     public static Plot Consecutive(AbfSharp.ABF abf, int channelIndex = 0)
     {
         return abf.AbfLength > 10 * 60

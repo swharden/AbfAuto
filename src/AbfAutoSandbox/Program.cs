@@ -2,26 +2,17 @@
  * to create analysis routines which may eventually ybe moved into the AbfAuto project.
  */
 
-namespace AbfAUtoSandbox;
+using System.Text;
+
+namespace AbfAutoSandbox;
 
 public static class Program
 {
     public static void Main()
     {
-        List<string> abfPaths = [];
-        //abfPaths.AddRange(Directory.GetFiles(@"X:\Data\Alchem\IN-VIVO\Phase-4\abfs\", "*.abf", SearchOption.AllDirectories));
-        abfPaths.Add(@"X:\Software\ABF protocol tests\abfs\0428 events -30.abf");
-
-        for (int i = 0; i < abfPaths.Count; i++)
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"Analyzing {i + 1}/{abfPaths.Count}");
-            Console.ForegroundColor = ConsoleColor.Gray;
-            string[] savedFiles = AbfAuto.Analyze.AbfFile(abfPaths[i]);
-            foreach (string savedFile in savedFiles)
-            {
-                Console.WriteLine($"Saved: {savedFile}");
-            }
-        }
+        string folder = @"X:\Data\zProjects\OT-Tom dendritic conductivity and Calcium homeostasis\Experiments";
+        string protocol = "0804";
+        ManualAnalysis.AnalyzeFolder(folder, protocol);
+        //ManualAnalysis.AnalyzeFile(@"X:\Data\zProjects\OT-Tom dendritic conductivity and Calcium homeostasis\Experiments\Time-matched CTs\2023-01-25\abfs\2023_01_25_0031.abf");
     }
 }

@@ -121,6 +121,12 @@ public static class ScottPlotExtensions
         return plot;
     }
 
+    public static Plot WithTitle(this Plot plot, string title)
+    {
+        plot.Title(title);
+        return plot;
+    }
+
     public static Plot WithBottomTicksOnly(this Plot plot)
     {
         plot.Axes.Left.TickGenerator = new ScottPlot.TickGenerators.EmptyTickGenerator();

@@ -11,20 +11,15 @@ public class BAP : IAnalyzer
 {
     public AnalysisResult Analyze(ABF abf)
     {
-        Plot plotStim = CommonPlots.AllSweeps
-            .Overlapping(abf)
-            .WithSignalHighQualityRendering()
-            .WithSignalRainbow();
-
-        plotStim.Axes.SetLimitsX(2.34, 2.38);
-
         Plot plotMemtest = CommonPlots.AllSweeps
-            .Overlapping(abf)
+            .OverlappingTimeRange(abf, 0.2, 0.8, 25)
             .WithSignalHighQualityRendering()
-            .WithSignalRainbow();
+            .WithTightHorizontalMargins()
+            .WithSignalRainbow()
+            .WithTitle("Membrane Test");
 
         MemtestResult mt = MemtestLogic.GetMeanMemtest(abf);
-        var an = plotMemtest.Add.Annotation(mt.GetMessage(), Alignment.UpperRight);
+        var an = plotMemtest.Add.Annotation(mt.GetShortMessage(), Alignment.UpperLeft);
         an.LabelShadowColor = Colors.Transparent;
         an.LabelBackgroundColor = Colors.Transparent;
         an.LabelFontSize = 16;
@@ -32,12 +27,16 @@ public class BAP : IAnalyzer
         an.LabelStyle.BorderRadius = 10;
         an.LabelBorderWidth = 0;
 
-        plotMemtest.Axes.SetLimitsX(0.2, 0.8);
-        plotMemtest.Axes.SetLimitsY(-1000, 1000);
+        Plot plotStim = CommonPlots.AllSweeps
+            .OverlappingTimeRange(abf, 2.34, 2.38, 0)
+            .WithSignalHighQualityRendering()
+            .WithTightHorizontalMargins()
+            .WithSignalRainbow()
+            .WithTitle("First Stimulus");
 
         MultiPlot2 mp = new();
-        mp.AddSubplot(plotMemtest, 0, 2, 0, 1);
-        mp.AddSubplot(plotStim, 1, 2, 0, 1);
+        mp.AddSubplot(plotMemtest, 0, 1, 0, 2);
+        mp.AddSubplot(plotStim, 0, 1, 1, 2);
 
         return AnalysisResult.Single(mp);
     }
