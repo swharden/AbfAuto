@@ -23,7 +23,7 @@ internal class InVivo3 : IAnalyzer
 
         // EEG analysis
         mp.AddSubplot(Empty(), 0, 3, 1, 3);
-        mp.AddSubplot(PlotStDev(abf), 0, 3, 2, 3);
+        mp.AddSubplot(PlotEegActivity(abf), 0, 3, 2, 3);
 
         // respiration analysis
         Cycle[] breaths = DetectBreaths(abf);
@@ -141,9 +141,14 @@ internal class InVivo3 : IAnalyzer
         return detector.GetDownwardCycles();
     }
 
-    ScottPlot.Plot PlotStDev(ABF abf, double binSec = 60, int channel = 0)
+    ScottPlot.Plot PlotEegActivity(ABF abf, double binSec = 60, int channel = 0)
     {
-        Sweep sweep = abf.GetAllData(channel);
+        Sweep sweep = abf.GetAllData(channel)
+            .Smooth(100) // remove noise
+            .Detrend(500) // center at 0
+            .Rectified() // make all squiggles upward
+            .Smooth(10_000); // aggressive smoothing makes the trace represent "squigglyness"
+
         int binCount = (int)(sweep.Duration / binSec) - 1;
         double[] values = new double[binCount];
         double[] binTimes = Enumerable.Range(0, binCount).Select(x => binSec * x / 60).ToArray();
@@ -152,11 +157,18 @@ internal class InVivo3 : IAnalyzer
             int i1 = (int)(binSec * i * abf.SampleRate);
             int i2 = (int)(binSec * (i + 1) * abf.SampleRate);
             Sweep seg = sweep.SubTraceByIndex(i1, i2);
-            values[i] = ScottPlot.Statistics.Descriptive.StandardDeviation(seg.Values);
+            values[i] = seg.Values.Average();
         }
 
         double baseline = values.Take(5).Average();
         values = values.Select(x => x / baseline * 100).ToArray();
+
+        /*
+        // Inspect the "squigglyness" trace in a pop-up window
+        Plot plot2 = new();
+        plot2.Add.Signal(sweep.Values);
+        ScottPlot.WinForms.FormsPlotViewer.Launch(plot2);
+        */
 
         Plot plot = new();
         plot.Add.Scatter(binTimes, values);
