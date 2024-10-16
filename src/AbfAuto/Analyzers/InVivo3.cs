@@ -1,6 +1,10 @@
 ﻿using AbfSharp;
 using ScottPlot;
 using AbfAuto.CycleDetection;
+using System.Threading.Channels;
+using System.Xml.Linq;
+using System.Runtime.InteropServices;
+using ScottPlot.Colormaps;
 
 namespace AbfAuto.Analyzers;
 
@@ -17,18 +21,18 @@ internal class InVivo3 : IAnalyzer
         mp.AddSubplot(PlotFullSweep(abf, 1, "Respiration"), 1, 3, 0, 3);
         mp.AddSubplot(PlotFullSweep(abf, 2, "Cardiac ECG"), 2, 3, 0, 3);
 
-        // spindles are not currently being recorded (y tho?)
-        mp.AddSubplot(MessagePlot("Spindles/Minute"), 0, 3, 1, 3);
-        mp.AddSubplot(MessagePlot("Amplitude (%)"), 0, 3, 2, 3);
+        // EEG analysis
+        mp.AddSubplot(Empty(), 0, 3, 1, 3);
+        mp.AddSubplot(PlotStDev(abf), 0, 3, 2, 3);
 
-        // plot respiration
+        // respiration analysis
         Cycle[] breaths = DetectBreaths(abf);
         breaths = DiscardSmallCycles(breaths);
         BinnedEvents binnedBreaths = new(breaths, abf.AbfLength, 60);
         mp.AddSubplot(PlotFreq(abf, binnedBreaths, "Breaths/Minute"), 1, 3, 1, 3);
         mp.AddSubplot(PlotAmp(abf, binnedBreaths, "Amplitude (%)"), 1, 3, 2, 3);
 
-        // plot cardiac
+        // cardiac analysis
         Cycle[] heartbeats = DetectHeartbeats(abf);
         heartbeats = DiscardSmallCycles(heartbeats);
         BinnedEvents binnedHeartbeats = new(heartbeats, abf.AbfLength, 60);
@@ -44,6 +48,14 @@ internal class InVivo3 : IAnalyzer
     {
         ScottPlot.Plot plot = new();
         plot.YLabel(message);
+        return plot;
+    }
+
+    ScottPlot.Plot Empty()
+    {
+        ScottPlot.Plot plot = new();
+        plot.Axes.Frameless();
+        plot.HideGrid();
         return plot;
     }
 
@@ -127,5 +139,32 @@ internal class InVivo3 : IAnalyzer
         detector.ApplySuccessiveSmoothing(33);
         detector.ApplySuccessiveDetrend(300);
         return detector.GetDownwardCycles();
+    }
+
+    ScottPlot.Plot PlotStDev(ABF abf, double binSec = 60, int channel = 0)
+    {
+        Sweep sweep = abf.GetAllData(channel);
+        int binCount = (int)(sweep.Duration / binSec) - 1;
+        double[] values = new double[binCount];
+        double[] binTimes = Enumerable.Range(0, binCount).Select(x => binSec * x / 60).ToArray();
+        for (int i = 0; i < binCount; i++)
+        {
+            int i1 = (int)(binSec * i * abf.SampleRate);
+            int i2 = (int)(binSec * (i + 1) * abf.SampleRate);
+            Sweep seg = sweep.SubTraceByIndex(i1, i2);
+            values[i] = ScottPlot.Statistics.Descriptive.StandardDeviation(seg.Values);
+        }
+
+        double baseline = values.Take(5).Average();
+        values = values.Select(x => x / baseline * 100).ToArray();
+
+        Plot plot = new();
+        plot.Add.Scatter(binTimes, values);
+        plot.Add.HorizontalLine(100, 1, Colors.Black, LinePattern.DenselyDashed);
+        plot.Axes.SetLimitsY(0, values.Max() * 1.1);
+
+        return plot
+            .WithYLabel("Activity (%)")
+            .WithVerticalLinesAtTagTimes(abf);
     }
 }
