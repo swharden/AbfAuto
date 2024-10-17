@@ -29,7 +29,7 @@ public static class ManualAnalysis
         Analyze(paths);
     }
 
-    private static void Analyze(string[] abfPaths, bool deleteOldAnalyses = true)
+    private static void Analyze(string[] abfPaths, bool deleteOldAnalyses = false)
     {
         for (int i = 0; i < abfPaths.Length; i++)
         {

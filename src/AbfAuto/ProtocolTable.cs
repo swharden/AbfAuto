@@ -41,6 +41,7 @@ public static class ProtocolTable
         { "0807", typeof(Analyzers.Uncaging) },
 
         { "EEG-3", typeof(Analyzers.InVivo3) },
+        { "EEG-2", typeof(Analyzers.InVivo2) },
     };
 
     /// <summary>
