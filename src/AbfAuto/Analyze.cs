@@ -40,7 +40,7 @@ public static class Analyze
         {
             saved = AbfFile(path);
         }
-        else if (path.EndsWith(".tif"))
+        else if (path.EndsWith(".tif", StringComparison.InvariantCultureIgnoreCase))
         {
             saved = TifFile(path);
         }
