@@ -1,6 +1,4 @@
-﻿using System.Windows.Forms;
-
-namespace AbfAuto;
+﻿namespace AbfAuto;
 
 /// <summary>
 /// Logic here determines which analyzer to apply to an ABF according to its protocol.
@@ -40,6 +38,13 @@ public static class ProtocolTable
         { "0804", typeof(Analyzers.BAP) },
         { "0807", typeof(Analyzers.Uncaging) },
 
+        // Sarthak's 2018 protocols
+        { "RestMemPotential", typeof(Analyzers.RMP) },
+        { "HALO Voltage Clamp Pulse", typeof(Analyzers.OptoMeanEpoch2) },
+        { "HALO Current Clamp Pulse", typeof(Analyzers.OptoMeanEpoch1) },
+        { "HALO Action Potential Inhibition", typeof(Analyzers.OptoMeanEpoch2) },
+
+        // Jeff's in-vivo protocols
         { "EEG-3", typeof(Analyzers.InVivo3) },
         { "EEG-2", typeof(Analyzers.InVivo2) },
     };
