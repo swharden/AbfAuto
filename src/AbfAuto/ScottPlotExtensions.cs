@@ -15,6 +15,14 @@ public static class ScottPlotExtensions
         return sig;
     }
 
+    public static ScottPlot.Plottables.Signal AddSignalSec(this Plot plot, Sweep sweep)
+    {
+        var sig = plot.Add.Signal(sweep.Values, sweep.SamplePeriod);
+        plot.XLabel("Time (sec)");
+        plot.Axes.Margins(horizontal: 0);
+        return sig;
+    }
+
     public static Plot WithSignalColor(this Plot plot, Color color)
     {
         foreach (var sig in plot.GetPlottables<ScottPlot.Plottables.Signal>())
