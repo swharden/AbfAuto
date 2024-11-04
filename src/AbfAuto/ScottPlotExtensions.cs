@@ -176,7 +176,7 @@ public static class ScottPlotExtensions
         return plot.WithXLabel("Time (minutes)");
     }
 
-    public static Plot WithVerticalLinesAtTagTimes(this Plot plot, ABF abf)
+    public static Plot WithVerticalLinesAtTagMinutes(this Plot plot, ABF abf)
     {
         foreach (var tag in abf.Tags)
         {

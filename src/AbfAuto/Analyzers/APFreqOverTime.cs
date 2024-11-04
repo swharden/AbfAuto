@@ -18,14 +18,14 @@ internal class APFreqOverTime : IAnalyzer
             .WithSignalLineWidth(1.5)
             .WithTightHorizontalMargins()
             .WithYLabelVoltage()
-            .WithVerticalLinesAtTagTimes(abf);
+            .WithVerticalLinesAtTagMinutes(abf);
 
         Plot plotRate = new();
         plotRate.Add.Scatter(sweepTimes, freqPerSweep);
         plotRate.WithTightHorizontalMargins()
             .WithYLabel("AP Frequency (Hz)")
             .WithXLabelMinutes()
-            .WithVerticalLinesAtTagTimes(abf);
+            .WithVerticalLinesAtTagMinutes(abf);
 
         MultiPlot2 mp2 = new();
         mp2.AddSubplot(plotFull, 0, 2, 0, 1);

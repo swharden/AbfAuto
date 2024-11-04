@@ -20,7 +20,7 @@ internal class MemtestRepeated : IAnalyzer
         var spIh = plotIh.Add.ScatterPoints(sweepTimes2, mts2.Select(x => x.Ih).ToArray());
         spIh.Color = Colors.Blue;
         plotIh.WithXLabelMinutes();
-        plotIh.WithVerticalLinesAtTagTimes(abf);
+        plotIh.WithVerticalLinesAtTagMinutes(abf);
         plotIh.Title("Holding Current");
         plotIh.Axes.AutoScale();
         plotIh.YLabel("Current (pA)");
@@ -29,7 +29,7 @@ internal class MemtestRepeated : IAnalyzer
         var spRm = plotRm.Add.ScatterPoints(sweepTimes2, mts2.Select(x => x.Rm).ToArray());
         spRm.Color = Colors.Red;
         plotRm.WithXLabelMinutes();
-        plotRm.WithVerticalLinesAtTagTimes(abf);
+        plotRm.WithVerticalLinesAtTagMinutes(abf);
         plotRm.Title("Membrane Resistance");
         plotRm.Axes.AutoScale();
         plotRm.Axes.SetLimits(bottom: 0);
@@ -39,14 +39,14 @@ internal class MemtestRepeated : IAnalyzer
         var spRa = plotRa.Add.ScatterPoints(sweepTimes2, mts2.Select(x => x.Ra).ToArray());
         spRa.Color = Colors.Black;
         plotRa.WithXLabelMinutes();
-        plotRa.WithVerticalLinesAtTagTimes(abf);
+        plotRa.WithVerticalLinesAtTagMinutes(abf);
         plotRa.Title("Access Resistance");
         plotRa.Axes.AutoScale();
         plotRa.Axes.SetLimits(bottom: 0);
         plotRa.YLabel("Resistance (MΩ)");
 
-        Plot plotFull = CommonPlots.AllSweeps.Consecutive(abf);
-        plotFull.WithVerticalLinesAtTagTimes(abf);
+        Plot plotFull = CommonPlots.AllSweeps.ConsecutiveMinutes(abf);
+        plotFull.WithVerticalLinesAtTagMinutes(abf);
         plotFull.Title("Full Recording");
         plotFull.YLabel("Current (pA)");
 

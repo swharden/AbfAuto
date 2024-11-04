@@ -48,7 +48,7 @@ internal class InVivo2 : IAnalyzer
         return plot
             .WithYLabel(name)
             .WithSignalLineWidth(1.5)
-            .WithVerticalLinesAtTagTimes(abf)
+            .WithVerticalLinesAtTagMinutes(abf)
             .WithTightHorizontalMargins()
             .WithPercentileVerticalMargins()
             .WithNoLeftTicks();
@@ -64,7 +64,7 @@ internal class InVivo2 : IAnalyzer
         plot.Axes.SetLimitsY(0, events.FreqMinutes.Max() * 1.1);
         return plot
             .WithYLabel(name)
-            .WithVerticalLinesAtTagTimes(abf);
+            .WithVerticalLinesAtTagMinutes(abf);
     }
 
     ScottPlot.Plot PlotAmp(ABF abf, BinnedEvents events, string name, bool normalize = true)
@@ -89,7 +89,7 @@ internal class InVivo2 : IAnalyzer
 
         return plot
             .WithYLabel(name)
-            .WithVerticalLinesAtTagTimes(abf);
+            .WithVerticalLinesAtTagMinutes(abf);
     }
 
     public static Cycle[] DiscardSmallCycles(Cycle[] cycles, double baselineSec = 60 * 5, double minFraction = 0.2)
@@ -144,6 +144,6 @@ internal class InVivo2 : IAnalyzer
 
         return plot
             .WithYLabel("Activity (%)")
-            .WithVerticalLinesAtTagTimes(abf);
+            .WithVerticalLinesAtTagMinutes(abf);
     }
 }
