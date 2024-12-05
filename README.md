@@ -4,6 +4,12 @@ AbfAuto performs automated analysis of electrophysiology data in ABF files.
 
 > ⚠ **WARNING:** This project is unsupported and is shared here for backup and educational purposes only.
 
+![](dev/screenshots/ap.png)
+![](dev/screenshots/reversal.png)
+![](dev/screenshots/iv.png)
+![](dev/screenshots/time.png)
+![](dev/screenshots/memtest.png)
+
 ## AbfAuto.exe
 
 The ABF auto-analyzer is a console application that accepts the path to an ABF or TIF file as an argument. It automatically analyzes ABF files according to the filename of the protocol used to record them. Output images are saved in an `_autoanalysis` subfolder created adjacent to the file being analyzed. The [AbfBrowser](https://github.com/swharden/AbfBrowser) web application knows how to display analyses using this folder structure.
