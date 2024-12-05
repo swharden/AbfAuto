@@ -69,4 +69,11 @@ public static class Extensions
         int i2 = (int)(sweep.Values.Length * endFraction);
         return sweep.Values[i1..i2].Average();
     }
+
+    public static double MeanOfTimeRange(this Sweep sweep, double startTime, double endTime)
+    {
+        int i1 = (int)(startTime * sweep.SampleRate);
+        int i2 = (int)(endTime * sweep.SampleRate);
+        return sweep.Values[i1..i2].Average();
+    }
 }

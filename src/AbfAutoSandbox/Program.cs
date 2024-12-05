@@ -8,9 +8,9 @@ public static class Program
 {
     public static void Main()
     {
-        string folder = @"X:\Data\Alchem\IN-VIVO\Phase-3";
-        string protocol = "EEG-3-";
+        string folder = @"X:\Data\zProjects\practice\2024-12-02 rotation ECl\2024-12-04";
+        string protocol = "0625";
         ManualAnalysis.AnalyzeFolder(folder, protocol);
-        //ManualAnalysis.AnalyzeFile(@"X:\Data\Alchem\IN-VIVO\Phase-3\03-03-2023\2023_03_03_EEG_0000.abf");
+        //ManualAnalysis.AnalyzeFile(@"X:\Data\zProjects\practice\2024-12-02 rotation ECl\2024-12-04\2024_12_04_0004.abf");
     }
 }

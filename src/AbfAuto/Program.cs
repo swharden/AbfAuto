@@ -11,7 +11,7 @@ public static class Program
     {
         if (System.Diagnostics.Debugger.IsAttached)
         {
-            string testPath = @"X:\Data\Alchem\NIMP\11-04-2021\2021_11_04_DIC1_0002.abf";
+            string testPath = @"X:\Data\zProjects\practice\2024-12-02 rotation ECl\2024-12-04\2024_12_04_0007.abf";
             args = [testPath];
         }
 
