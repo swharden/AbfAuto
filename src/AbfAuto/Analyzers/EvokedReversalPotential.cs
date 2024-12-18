@@ -62,10 +62,13 @@ internal class EvokedReversalPotential : IAnalyzer
             // note the voltage
             potentialsBySweep[i] = abf.Epochs[stimEpochIndex].Level + abf.Epochs[stimEpochIndex].LevelDelta * i;
 
-            var sig = plot1.Add.Signal(sweep.Values, sweep.SamplePeriod);
-            sig.LineWidth = 1.5f;
+            // smooth slightly before plotting
+            double[] smoothValues = DeveloperTools.Smoothing.Smooth(sweep.Values, 20);
+
+            var sig = plot1.Add.Signal(smoothValues, sweep.SamplePeriod);
+            sig.LineWidth = 2;
             sig.AlwaysUseLowDensityMode = true;
-            sig.Color = Colors.C0.WithOpacity(.5);
+            sig.Color = Colors.C0.WithOpacity(.7);
         }
 
         plot1.Axes.SetLimitsX(measureTime1 - 0.1, measureTime1 + 0.1);
@@ -82,37 +85,26 @@ internal class EvokedReversalPotential : IAnalyzer
         markers.MarkerSize = 14;
         markers.MarkerLineWidth = 2;
 
-        List<Coordinates> pointsToFit = [new(potentialsBySweep[0], currentsBySweep[0])];
-        for (int i = 1; i < abf.SweepCount; i++)
-        {
-            // stop fitting once the current starts decreasing (sign of unclamped AP)
-            if (currentsBySweep[i] < currentsBySweep[i - 1])
-            {
-                for (int j = i; j < abf.SweepCount; j++)
-                {
-                    var xMark = plot2.Add.Marker(potentialsBySweep[j], currentsBySweep[j]);
-                    xMark.Color = Colors.Red.WithAlpha(.5);
-                    xMark.LineWidth = 3;
-                    xMark.Shape = MarkerShape.Eks;
-                    xMark.Size = 15;
-                }
-                break;
-            }
-            pointsToFit.Add(new(potentialsBySweep[i], currentsBySweep[i]));
-        }
-
-        ScottPlot.Statistics.LinearRegression fit = new(pointsToFit);
+        ScottPlot.Statistics.LinearRegression fit = new(potentialsBySweep, currentsBySweep);
         double reversal = -fit.Offset / fit.Slope;
         plot2.Title($"Reversal = {reversal:0.00} mV");
+        plot2.Add.VerticalLine(reversal, 1, Colors.Red, LinePattern.DenselyDashed);
 
-        double x1 = pointsToFit.First().X;
-        double x2 = pointsToFit.Last().X;
+        double x1 = potentialsBySweep.First() - 10;
+        double x2 = potentialsBySweep.Last() + 10;
         Coordinates pt1 = new(x1, fit.GetValue(x1));
         Coordinates pt2 = new(x2, fit.GetValue(x2));
         var line = plot2.Add.Line(pt1, pt2);
         line.LineWidth = 3;
-        line.LineColor = Colors.Red.WithAlpha(.5);
+        line.LineColor = Colors.Red.WithOpacity(.5);
         line.LinePattern = LinePattern.DenselyDashed;
+
+        // Use the fitted line to apply limits to the first plot.
+        // This allows the interesting bit to be zoomed in on and ignores large artifacts
+        // like the stimulus or unclamped APs
+        plot2.Axes.AutoScale();
+        plot1.Axes.SetLimitsY(plot2.Axes.GetLimits());
+        plot1.Axes.ZoomOutY(1.5);
 
         MultiPlot2 mp = new();
         mp.AddSubplot(plot1, 0, 1, 0, 2);

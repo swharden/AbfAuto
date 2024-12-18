@@ -16,8 +16,4 @@
         <PackageReference Include="ScottPlot.WinForms" Version="5.0.39" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="DeveloperTools\" />
-    </ItemGroup>
-
 </Project>
