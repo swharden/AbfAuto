@@ -35,6 +35,8 @@ public static class ProtocolTable
         { "0503", typeof(Analyzers.OptoMeanEpoch1) },
         { "0509", typeof(Analyzers.OptoMeanEpoch1) },
 
+        { "0615", typeof(Analyzers.LtpMeasure) },
+        { "0616", typeof(Analyzers.LtpInduction) },
         { "0625", typeof(Analyzers.EvokedReversalPotential) },
 
         { "0804", typeof(Analyzers.BAP) },

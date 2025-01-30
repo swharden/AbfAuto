@@ -8,11 +8,16 @@ public static class Program
 {
     public static void Main()
     {
-        string folderOfDailyFolders = @"X:\Data\zProjects\practice\2024-12-02 rotation ECl";
-        foreach (string subFolder in Directory.GetDirectories(folderOfDailyFolders))
+        string analyzeThis = @"X:\Data\zProjects\Aging and DA\BLA LTP\abfs\2025-01-28-DIC2-mom-100hz";
+        string analyzeOnlyAbfsWithProtocol = "0615";
+
+        if (File.Exists(analyzeThis))
         {
-            ManualAnalysis.AnalyzeFolder(subFolder, "0625");
+            ManualAnalysis.AnalyzeFile(analyzeThis);
         }
-        //ManualAnalysis.AnalyzeFile(@"X:\Data\zProjects\practice\2024-12-02 rotation ECl\2024-12-17\2024_12_17_0017.abf");
+        else
+        {
+            ManualAnalysis.AnalyzeFolder(analyzeThis, analyzeOnlyAbfsWithProtocol);
+        }
     }
 }
