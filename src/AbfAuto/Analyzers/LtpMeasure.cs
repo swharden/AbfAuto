@@ -1,5 +1,6 @@
 ﻿using AbfSharp;
 using ScottPlot;
+using AbfAuto.Evoked;
 
 namespace AbfAuto.Analyzers;
 
@@ -7,60 +8,58 @@ internal class LtpMeasure : IAnalyzer
 {
     public AnalysisResult Analyze(ABF abf)
     {
+        const int EPOCH_INDEX = 4;
+
         double[] peakAmplitudes = new double[abf.SweepCount];
-        double[] peakTimesSec = ScottPlot.Generate.Consecutive(abf.SweepCount, abf.SweepLength);
-        double[] peakTimesMinutes = peakTimesSec.Select(x => x / 60).ToArray();
+        double[] peakTimesMinutes = new double[abf.SweepCount];
 
-        double stimTime = abf.Epochs[4].StartTime;
+        Plot plotOverlap = new();
+        plotOverlap.YLabel("Δ Current (pA)");
+        plotOverlap.XLabel("Time (ms)");
 
-        double baselineStartTime = stimTime - 0.5;
-        double baselineEndTime = stimTime - 0.05;
-
-        double measureStartTime = stimTime + 0.004;
-        double measureEndTime = measureStartTime + 0.020;
-
-        double viewStartTime = measureStartTime - 0.05;
-        double viewEndTime = viewStartTime + 0.15;
-
-        int stimIndex = (int)(stimTime * abf.SampleRate);
-        int viewStartIndex = (int)(viewStartTime * abf.SampleRate);
-        int viewEndIndex = (int)(viewEndTime * abf.SampleRate);
-
-        Plot plotSweep = new();
-        plotSweep.YLabel("Δ Current (pA)");
-        plotSweep.XLabel("Time (seconds)");
+        Plot plotSequential = new();
+        plotSequential.YLabel("Δ Current (pA)");
+        plotSequential.XLabel("Time (sequential)");
+        plotSequential.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.EmptyTickGenerator();
 
         for (int i = 0; i < abf.SweepCount; i++)
         {
-            Sweep sweep = abf.GetSweep(i).SmoothHanning(TimeSpan.FromMilliseconds(1));
-            double baselineMean = sweep.MeanOfTimeRange(baselineStartTime, baselineEndTime);
-            sweep.SubtractInPlace(baselineMean);
-            sweep = sweep.SubSweepByIndex(viewStartIndex, viewEndIndex);
+            Evoked.EvokedSegment segment = new(abf.GetSweep(i), abf.Epochs[EPOCH_INDEX], EvokedSettings.EvokedEpsc);
+            peakAmplitudes[i] = Math.Abs(segment.Min);
+            peakTimesMinutes[i] = abf.SweepLength * i / 60;
 
-            peakAmplitudes[i] = Math.Abs(sweep.Values.Min());
-
-            var sig = plotSweep.Add.Signal(sweep.Values, sweep.SamplePeriod * 1000);
+            var sig = plotOverlap.Add.Signal(segment.Values, segment.SamplePeriod * 1000);
             sig.Color = Colors.C0.WithAlpha(.5);
-            plotSweep.WithSignalLineWidth(1.5).WithSignalHighQualityRendering();
+
+            var sig2 = plotSequential.Add.Signal(segment.Values, segment.SamplePeriod * 1000);
+            sig2.Color = Colors.C0;
+            sig2.Data.XOffset = (segment.SamplePeriod * 1000 * segment.Values.Length) * i;
         }
+        plotOverlap.WithSignalLineWidth(1.5).WithSignalHighQualityRendering();
+        plotOverlap.Axes.Margins(0, 0.1);
+        plotOverlap.Add.HorizontalLine(0, 1, Colors.Black, LinePattern.Dashed);
 
-        plotSweep.Add.HorizontalLine(0, 1, Colors.Black, LinePattern.Dashed);
-
-        plotSweep.Axes.AutoScale();
-        AxisLimits limits = plotSweep.Axes.GetDataLimits();
-
-        plotSweep.Axes.SetLimitsX(limits.Left, limits.Right);
-        plotSweep.Axes.SetLimitsY(limits.Bottom * 1.02, limits.Top * 0.1);
+        plotSequential.WithSignalLineWidth(1.5).WithSignalHighQualityRendering();
+        plotSequential.Add.HorizontalLine(0, 1, Colors.Black, LinePattern.Dashed);
+        plotSequential.Axes.Margins(0, 0.1);
 
         Plot plotPeaks = new();
-        plotPeaks.Add.Scatter(peakTimesMinutes, peakAmplitudes);
-        plotPeaks.YLabel("Amplitude (pA)");
+        var bars = plotPeaks.Add.Bars(peakTimesMinutes, peakAmplitudes);
+        foreach(var bar in bars.Bars)
+        {
+            bar.Size = abf.SweepLength / 60;
+            bar.BorderColor = Colors.Gray;
+            bar.FillColor = Colors.Gray;
+        }
+
+        plotPeaks.YLabel("Evoked Current Amplitude (pA)");
         plotPeaks.XLabel("Time (minutes)");
         plotPeaks.Axes.AutoScale();
-        plotPeaks.Axes.SetLimitsY(0, plotPeaks.Axes.GetLimits().Top);
+        plotPeaks.Axes.SetLimits(bottom: 0);
 
         MultiPlot2 mp = new();
-        mp.AddSubplot(plotSweep, 0, 1, 0, 2);
+        mp.AddSubplot(plotOverlap, 0, 2, 0, 2);
+        mp.AddSubplot(plotSequential, 1, 2, 0, 2);
         mp.AddSubplot(plotPeaks, 0, 1, 1, 2);
 
         return AnalysisResult.Single(mp);
