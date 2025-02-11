@@ -44,12 +44,14 @@ internal class LtpMeasure : IAnalyzer
         plotSequential.Axes.Margins(0, 0.1);
 
         Plot plotPeaks = new();
+        IColormap colormap = new ScottPlot.Colormaps.Turbo();
         var bars = plotPeaks.Add.Bars(peakTimesMinutes, peakAmplitudes);
         foreach(var bar in bars.Bars)
         {
             bar.Size = abf.SweepLength / 60;
             bar.BorderColor = Colors.Gray;
-            bar.FillColor = Colors.Gray;
+            double colorFraction = ScottPlot.NumericConversion.Clamp((bar.Value - 100) / 2000, 0, 1);
+            bar.FillColor = colormap.GetColor(colorFraction);
         }
 
         plotPeaks.YLabel("Evoked Current Amplitude (pA)");

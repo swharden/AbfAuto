@@ -10,7 +10,7 @@ public static class Program
 {
     public static void Main()
     {
-        string analyzeThis = @"X:\Data\zProjects\Aging and DA\BLA LTP\abfs\2025-01-30-DIC2-practice\2025_01_30_0027.abf";
+        string analyzeThis = @"X:\Data\zProjects\Aging and DA\BLA LTP\abfs";
 
         string? analyzeOnlyAbfsWithProtocol = "0615";
 
