@@ -19,7 +19,7 @@ internal class LtpInduction : IAnalyzer
         double pulseStart = abf.Epochs[epochIndex].StartTime;
         double pulseEnd = abf.Epochs[epochIndex].EndTime;
         var span1 = plot.Add.HorizontalSpan(pulseStart, pulseEnd);
-        span1.FillColor = Colors.Red.WithAlpha(.1);
+        span1.FillColor = Colors.Yellow.WithAlpha(.1);
         span1.LineWidth = 0;
 
         return AnalysisResult.Single(plot);
